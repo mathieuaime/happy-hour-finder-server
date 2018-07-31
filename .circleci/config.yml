@@ -40,6 +40,8 @@ jobs:
       # run tests!
       - run: mvn integration-test
 
+      - run: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
+
       - run: mvn package
 
       - run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
