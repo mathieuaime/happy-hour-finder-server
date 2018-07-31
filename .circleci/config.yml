@@ -42,6 +42,8 @@ jobs:
 
       - run: mvn package
 
+      - run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
+
       - store_test_results:
           path: target/surefire-reports
 
