@@ -37,12 +37,6 @@ public class BarServiceImpl implements BarService {
     }
 
     @Override
-    public Bar update(Long barId, Bar bar) {
-        bar.setId(barId);
-        return barDAO.save(bar);
-    }
-
-    @Override
     public void deleteById(Long barId) {
         barDAO.deleteById(barId);
     }

@@ -26,6 +26,7 @@
         <sonar.organization>mathieuaime-github</sonar.organization>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.jacoco.reportPaths>target/jacoco.exec,target/jacoco-it.exec</sonar.jacoco.reportPaths>
+        <modelmapper-spring.version>2.1.0</modelmapper-spring.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper.extensions</groupId>
+            <artifactId>modelmapper-spring</artifactId>
+            <version>${modelmapper-spring.version}</version>
         </dependency>
 
         <dependency>

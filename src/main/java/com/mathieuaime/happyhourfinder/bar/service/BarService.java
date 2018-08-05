@@ -14,7 +14,5 @@ public interface BarService {
 
     Bar save(Bar bar);
 
-    Bar update(Long barId, Bar bar);
-
     void deleteById(Long barId);
 }
