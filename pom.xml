@@ -25,7 +25,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>mathieuaime-github</sonar.organization>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
-        <sonar.jacoco.reportPaths>target/jacoco.exec,target/jacoco-it.exec</sonar.jacoco.reportPaths>
+        <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
         <modelmapper-spring.version>2.1.0</modelmapper-spring.version>
     </properties>
 

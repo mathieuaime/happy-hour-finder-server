@@ -42,12 +42,12 @@ jobs:
 
       - run: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
 
-      - run: mvn package
-
       - run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
+
+      - run: mvn package
 
       - store_test_results:
           path: target/surefire-reports
 
       - store_artifacts:
-          path: target/happy-hour-finder-server-0.0.1-SNAPSHOT.jar
+          path: target/happy-hour-finder-server-0.0.2-SNAPSHOT.jar
