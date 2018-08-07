@@ -50,6 +50,8 @@ public class BarControllerTest {
     private BarService barService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+    private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar").build();
+    private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").build();
 
     @Test
     public void getStatus() throws Exception {
@@ -59,19 +61,11 @@ public class BarControllerTest {
                 .andExpect(content().string("working"));
 
         verifyNoMoreInteractions(barService);
-
     }
 
     @Test
     public void getBars() throws Exception {
-        Bar bar = new Bar();
-        bar.setId(1L);
-        bar.setName("Bar");
-        Bar bar2 = new Bar();
-        bar2.setId(2L);
-        bar2.setName("Bar2");
-
-        Page<Bar> paginableBar = new PageImpl<>(Arrays.asList(bar, bar2));
+        Page<Bar> paginableBar = new PageImpl<>(Arrays.asList(BAR_1, BAR_2));
 
         when(barService.findAll(any(Pageable.class))).thenReturn(paginableBar);
 
@@ -90,11 +84,7 @@ public class BarControllerTest {
 
     @Test
     public void getBarById() throws Exception {
-        Bar bar = new Bar();
-        bar.setId(1L);
-        bar.setName("Bar");
-
-        when(barService.findById(bar.getId())).thenReturn(Optional.of(bar));
+        when(barService.findById(BAR_1.getId())).thenReturn(Optional.of(BAR_1));
 
         mockMvc.perform(get(VERSION + BARS + "{id}", 1L)
                 .contentType(APPLICATION_JSON))
