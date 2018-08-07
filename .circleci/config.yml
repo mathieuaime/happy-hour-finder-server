@@ -50,4 +50,4 @@ jobs:
           path: target/surefire-reports
 
       - store_artifacts:
-          path: target/happy-hour-finder-server-0.0.2-SNAPSHOT.jar
+          path: target/happy-hour-finder-server-1.0.0.jar
