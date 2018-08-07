@@ -118,6 +118,9 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <includes>
+                            <include>**/*Test*.java</include>
+                        </includes>
                         <argLine>${jacoco.agent.argLine}</argLine>
                     </configuration>
                 </plugin>
