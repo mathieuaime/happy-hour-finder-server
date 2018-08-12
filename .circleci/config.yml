@@ -4,9 +4,10 @@
 #
 version: 2
 jobs:
-  build:
+  build_back:
+    working_directory: ~/happy-hour-finder-server/backend
+
     docker:
-      # specify the version you desire here
       - image: circleci/openjdk:8-jdk
 
       # Specify service dependencies here if necessary
@@ -14,40 +15,101 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/postgres:9.4
 
-    working_directory: ~/happy-hour-finder-server
-
     environment:
-      # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
 
     steps:
-      - checkout
+      - checkout:
+          path: ~/happy-hour-finder-server
 
-      # Download and cache dependencies
+      - run:
+          name: Show current branch
+          command: echo ${CIRCLE_BRANCH}
+
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "pom.xml" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
 
-      - run: mvn dependency:go-offline
+      - run:
+          name: Install dependencies
+          command: mvn dependency:go-offline
 
       - save_cache:
+          key: v1-dependencies-{{ checksum "pom.xml" }}
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
 
-      # run tests!
-      - run: mvn integration-test
+      - run:
+          name: Integration tests
+          command: mvn integration-test
 
-      - run: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
+      - run:
+          name: Generate Code Coverage Report
+          command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
 
-      - run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
+      - run:
+          name: Run Code Quality Analysis
+          command: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
 
-      - run: mvn package
+      - run:
+          name: Packaging
+          command: mvn package
 
       - store_test_results:
           path: target/surefire-reports
 
       - store_artifacts:
-          path: target/happy-hour-finder-server-1.1.0-SNAPSHOT.jar
+          path: target/happy-hour-finder-backend-1.1.0-SNAPSHOT.jar
+
+  build_front:
+    working_directory: ~/happy-hour-finder-server/frontend
+
+    docker:
+      - image: circleci/node:10.7.0-browsers
+
+    steps:
+      - checkout:
+          path: ~/happy-hour-finder-server
+
+      - run:
+          name: Show current branch
+          command: echo ${CIRCLE_BRANCH}
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: Install local dependencies
+          command: npm install
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: Testing
+          command: npm run test
+
+      - run:
+          name: Building
+          command: npm run build
+
+      - save_cache:
+          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - dist
+
+      - store_artifacts:
+          path: target/happy-hour-finder-frontend-1.1.0-SNAPSHOT.jar
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - build_back
+      - build_front

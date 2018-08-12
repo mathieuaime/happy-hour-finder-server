@@ -2,6 +2,7 @@ package com.mathieuaime.happyhourfinder.bar.controller;
 
 import com.mathieuaime.happyhourfinder.bar.dto.BarDTO;
 import com.mathieuaime.happyhourfinder.bar.error.BarNotFoundException;
+import com.mathieuaime.happyhourfinder.common.constants.Paths;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
 import org.modelmapper.ModelMapper;
@@ -17,12 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.mathieuaime.happyhourfinder.common.constants.Paths.BARS;
-import static com.mathieuaime.happyhourfinder.common.constants.Paths.VERSION;
-
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(value = VERSION + BARS)
+@RequestMapping(value = Paths.VERSION + Paths.BARS)
 public class BarController {
     private final BarService barService;
 
