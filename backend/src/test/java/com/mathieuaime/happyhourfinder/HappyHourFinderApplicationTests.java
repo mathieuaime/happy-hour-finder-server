@@ -9,9 +9,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class HappyHourFinderApplicationTests {
 
-    @Test
-    public void contextLoads() {
-        HappyHourFinderApplication.main(new String[]{});
-    }
+  @Test
+  public void contextLoads() {
+    HappyHourFinderApplication.main(new String[]{});
+  }
 
 }

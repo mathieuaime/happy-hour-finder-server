@@ -1,10 +1,10 @@
 package com.mathieuaime.happyhourfinder.bar.controller;
 
-import com.mathieuaime.happyhourfinder.bar.dto.BarDTO;
+import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
 import com.mathieuaime.happyhourfinder.bar.error.BarNotFoundException;
-import com.mathieuaime.happyhourfinder.common.constants.Paths;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
+import com.mathieuaime.happyhourfinder.common.constants.Paths;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,50 +22,57 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = Paths.VERSION + Paths.BARS)
 public class BarController {
-    private final BarService barService;
 
-    private final ModelMapper modelMapper;
+  private final BarService barService;
 
-    @Autowired
-    public BarController(BarService barService, ModelMapper modelMapper) {
-        this.barService = barService;
-        this.modelMapper = modelMapper;
-    }
+  private final ModelMapper modelMapper;
 
-    @GetMapping("/status/check")
-    public String status() {
-        return "working";
-    }
+  @Autowired
+  public BarController(BarService barService, ModelMapper modelMapper) {
+    this.barService = barService;
+    this.modelMapper = modelMapper;
+  }
 
-    @GetMapping
-    public Page<BarDTO> getBars(Pageable pageable) {
-        return barService.findAll(pageable)
-                .map(this::convertToDto);
-    }
+  @GetMapping("/status/check")
+  public String status() {
+    return "working";
+  }
 
-    @GetMapping("/{id}")
-    public BarDTO getBar(@PathVariable Long id) {
-        return barService.findById(id)
-                .map(this::convertToDto)
-                .orElseThrow(BarNotFoundException::new);
-    }
+  @GetMapping
+  public Page<BarDto> getBars(Pageable pageable) {
+    return barService.findAll(pageable)
+        .map(this::convertToDto);
+  }
 
-    @PostMapping
-    public BarDTO saveBar(@RequestBody BarDTO barDTO) {
-        Bar bar = barService.save(convertToEntity(barDTO));
-        return convertToDto(bar);
-    }
+  /**
+   * Find a bar by its id.
+   *
+   * @param id the id
+   * @return the bar dto
+   */
+  @GetMapping("/{id}")
+  public BarDto getBar(@PathVariable Long id) {
+    return barService.findById(id)
+        .map(this::convertToDto)
+        .orElseThrow(BarNotFoundException::new);
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteBar(@PathVariable Long id) {
-        barService.deleteById(id);
-    }
+  @PostMapping
+  public BarDto saveBar(@RequestBody BarDto barDto) {
+    Bar bar = barService.save(convertToEntity(barDto));
+    return convertToDto(bar);
+  }
 
-    private BarDTO convertToDto(Bar bar) {
-        return modelMapper.map(bar, BarDTO.class);
-    }
+  @DeleteMapping("/{id}")
+  public void deleteBar(@PathVariable Long id) {
+    barService.deleteById(id);
+  }
 
-    private Bar convertToEntity(BarDTO barDTO) {
-        return modelMapper.map(barDTO, Bar.class);
-    }
+  private BarDto convertToDto(Bar bar) {
+    return modelMapper.map(bar, BarDto.class);
+  }
+
+  private Bar convertToEntity(BarDto barDto) {
+    return modelMapper.map(barDto, Bar.class);
+  }
 }

@@ -1,18 +1,18 @@
 package com.mathieuaime.happyhourfinder.bar.service;
 
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
-
 
 public interface BarService {
-    Page<Bar> findAll(Pageable pageable);
 
-    Optional<Bar> findById(Long id);
+  Page<Bar> findAll(Pageable pageable);
 
-    Bar save(Bar bar);
+  Optional<Bar> findById(Long id);
 
-    void deleteById(Long barId);
+  Bar save(Bar bar);
+
+  void deleteById(Long barId);
 }

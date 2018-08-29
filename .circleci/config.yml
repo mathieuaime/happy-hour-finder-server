@@ -45,6 +45,10 @@ jobs:
           command: mvn integration-test
 
       - run:
+          name: Checkstyle
+          command: mvn checkstyle:checkstyle
+
+      - run:
           name: Generate Code Coverage Report
           command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
 

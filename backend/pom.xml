@@ -16,6 +16,9 @@
     <properties>
         <java.version>1.8</java.version>
         <modelmapper-spring.version>2.1.0</modelmapper-spring.version>
+        <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>8.11</checkstyle.version>
+        <maven-checkstyle-plugin.configLocation>google_checks.xml</maven-checkstyle-plugin.configLocation>
     </properties>
 
     <dependencies>
@@ -86,6 +89,36 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>${maven-checkstyle-plugin.configLocation}</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <violationSeverity>warning</violationSeverity>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                            <goal>checkstyle-aggregate</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

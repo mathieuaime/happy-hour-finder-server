@@ -30,6 +30,8 @@
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
         <jaCoCoExecutionDataFile>target/jacoco.exec</jaCoCoExecutionDataFile>
+        <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
+        <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
     </properties>
 
     <build>
@@ -37,6 +39,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <dataFile>${jaCoCoExecutionDataFile}</dataFile>
                 </configuration>
@@ -67,12 +70,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.16</version>
+                    <version>${maven-surefire-plugin.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.surefire</groupId>
                             <artifactId>surefire-junit47</artifactId>
-                            <version>2.16</version>
+                            <version>${maven-surefire-plugin.version}</version>
                         </dependency>
                     </dependencies>
                     <configuration>

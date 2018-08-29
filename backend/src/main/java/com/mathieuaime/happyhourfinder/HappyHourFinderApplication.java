@@ -9,12 +9,13 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @SpringBootApplication
 @EnableSpringDataWebSupport
 public class HappyHourFinderApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(HappyHourFinderApplication.class, args);
-    }
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(HappyHourFinderApplication.class, args);
+  }
+
+  @Bean
+  public ModelMapper modelMapper() {
+    return new ModelMapper();
+  }
 }

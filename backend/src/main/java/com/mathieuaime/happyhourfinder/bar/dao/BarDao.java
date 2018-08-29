@@ -7,5 +7,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RepositoryRestResource
 @CrossOrigin(origins = "http://localhost:4200")
-public interface BarDAO extends PagingAndSortingRepository<Bar, Long> {
+public interface BarDao extends PagingAndSortingRepository<Bar, Long> {
+
 }
