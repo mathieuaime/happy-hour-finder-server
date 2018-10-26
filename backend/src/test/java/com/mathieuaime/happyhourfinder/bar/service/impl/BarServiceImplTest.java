@@ -13,6 +13,9 @@ import static org.mockito.Mockito.when;
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.Before;
@@ -31,8 +34,14 @@ public class BarServiceImplTest {
   private BarDao barDao;
 
   private BarService mockBarService;
-  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1").build();
-  private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").build();
+
+  private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),
+      26910);
+
+  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1")
+      .coordinates(geometryFactory.createPoint(new Coordinate(1, 2))).build();
+  private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2")
+      .coordinates(geometryFactory.createPoint(new Coordinate(2, 3))).build();
 
   @Before
   public void setUp() throws Exception {
