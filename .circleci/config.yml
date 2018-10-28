@@ -54,7 +54,7 @@ jobs:
 
       - run:
           name: Run Code Quality Analysis
-          command: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
+          command: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${CIRCLE_BRANCH}
 
       - run:
           name: Packaging
