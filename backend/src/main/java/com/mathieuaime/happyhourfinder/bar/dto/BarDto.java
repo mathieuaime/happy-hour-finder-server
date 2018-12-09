@@ -6,12 +6,12 @@ import com.mathieuaime.happyhourfinder.bar.mapper.JsonToPointDeserializer;
 import com.mathieuaime.happyhourfinder.bar.mapper.PointToJsonSerializer;
 import com.vividsolutions.jts.geom.Point;
 import java.io.Serializable;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class BarDto implements Serializable {
 
   private Long id;

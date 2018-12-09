@@ -6,7 +6,6 @@ import static com.mathieuaime.happyhourfinder.common.constants.Paths.VERSION;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -22,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
@@ -31,8 +31,12 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import java.util.Arrays;
 import java.util.Optional;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -53,6 +57,12 @@ public class BarControllerTest {
   @MockBean
   private BarService barService;
 
+  @MockBean
+  private BarDao barDao;
+
+  @MockBean
+  private ModelMapper modelMapper;
+
   private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),
       26910);
 
@@ -61,8 +71,27 @@ public class BarControllerTest {
   private static final Point POINT_1 = geometryFactory.createPoint(new Coordinate(1, 2));
   private static final Point POINT_2 = geometryFactory.createPoint(new Coordinate(2, 3));
 
-  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar").coordinates(POINT_1).build();
+  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1").coordinates(POINT_1).build();
   private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
+
+  private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1").build();
+  private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2").build();
+
+  /**
+   * Set up the mocks.
+   */
+  @Before
+  public void setUp() {
+    Mockito.when(modelMapper.map(BAR_1, BarDto.class)).thenReturn(BAR_DTO_1);
+    Mockito.when(modelMapper.map(BAR_2, BarDto.class)).thenReturn(BAR_DTO_2);
+    Mockito.when(modelMapper.map(BAR_DTO_1, Bar.class)).thenReturn(BAR_1);
+    Mockito.when(modelMapper.map(BAR_DTO_2, Bar.class)).thenReturn(BAR_2);
+  }
+
+  @After
+  public void tearDown() {
+    verifyNoMoreInteractions(barService);
+  }
 
   @Test
   public void getStatus() throws Exception {
@@ -70,8 +99,6 @@ public class BarControllerTest {
         .contentType(MediaType.TEXT_PLAIN))
         .andExpect(status().isOk())
         .andExpect(content().string("working"));
-
-    verifyNoMoreInteractions(barService);
   }
 
   @Test
@@ -85,48 +112,44 @@ public class BarControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content", hasSize(2)))
         .andExpect(jsonPath("$.content[0].id", is(1)))
-        .andExpect(jsonPath("$.content[0].name", is("Bar")))
+        .andExpect(jsonPath("$.content[0].name", is("Bar1")))
         .andExpect(jsonPath("$.content[0].coordinates", is("POINT (1.0 2.0)")))
         .andExpect(jsonPath("$.content[1].id", is(2)))
         .andExpect(jsonPath("$.content[1].name", is("Bar2")))
         .andExpect(jsonPath("$.content[1].coordinates", is("POINT (2.0 3.0)")));
 
     verify(barService, times(1)).findAll(any(Pageable.class));
-    verifyNoMoreInteractions(barService);
   }
 
   @Test
   public void getBarById() throws Exception {
-    when(barService.findById(BAR_1.getId())).thenReturn(Optional.of(BAR_1));
+    Long barId = BAR_1.getId();
 
-    mockMvc.perform(get(VERSION + BARS + "{id}", 1L)
+    when(barService.findById(barId)).thenReturn(Optional.of(BAR_1));
+
+    mockMvc.perform(get(VERSION + BARS + "{id}", barId)
         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(1)))
-        .andExpect(jsonPath("$.name", is("Bar")))
+        .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")));
 
-    verify(barService, times(1)).findById(anyLong());
-    verifyNoMoreInteractions(barService);
+    verify(barService, times(1)).findById(barId);
   }
 
   @Test
   public void getBarByIdNotFound() throws Exception {
-    when(barService.findById(1L)).thenReturn(Optional.empty());
+    Long barId = BAR_1.getId();
 
     mockMvc.perform(get(VERSION + BARS + "{id}", 1L)
         .contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
 
-    verify(barService, times(1)).findById(anyLong());
-    verifyNoMoreInteractions(barService);
+    verify(barService, times(1)).findById(barId);
   }
 
   @Test
   public void saveBar() throws Exception {
-    BarDto barDto = new BarDto();
-    barDto.setName("Bar");
-    barDto.setCoordinates(POINT_1);
 
     when(barService.save(any(Bar.class))).then(invocationOnMock -> {
       Bar bar = invocationOnMock.getArgument(0);
@@ -136,10 +159,10 @@ public class BarControllerTest {
 
     mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(barDto)))
+        .content(objectMapper.writeValueAsString(BAR_DTO_1)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(1)))
-        .andExpect(jsonPath("$.name", is("Bar")))
+        .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")));
 
     verify(barService, times(1)).save(any(Bar.class));
@@ -166,17 +189,17 @@ public class BarControllerTest {
         .andExpect(jsonPath("$.coordinates", nullValue()));
 
     verify(barService, times(1)).save(any(Bar.class));
-    verifyNoMoreInteractions(barService);
   }
 
   @Test
   public void removeBar() throws Exception {
-    doNothing().when(barService).deleteById(1L);
+    Long barId = BAR_1.getId();
 
-    mockMvc.perform(delete(VERSION + BARS + "{id}", 1L))
+    doNothing().when(barService).deleteById(barId);
+
+    mockMvc.perform(delete(VERSION + BARS + "{id}", barId))
         .andExpect(status().isOk());
 
-    verify(barService, times(1)).deleteById(1L);
-    verifyNoMoreInteractions(barService);
+    verify(barService, times(1)).deleteById(barId);
   }
 }
