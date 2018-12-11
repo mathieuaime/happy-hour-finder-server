@@ -1,16 +1,5 @@
 <div class="container">
-  <table class="table table-dark table-hover table-striped">
-    <thead class="thead-light">
-    <tr>
-      <th>Id</th>
-      <th>Name</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let bar of bars">
-      <td>{{bar.id}}</td>
-      <td>{{bar.name}}</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="row" infiniteScroll (scrolled)="onScroll()">
+    <app-bar-card [bar]="bar" style="width:100%" *ngFor="let bar of bars"></app-bar-card>
+  </div>
 </div>

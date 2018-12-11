@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, tap, scan, mergeMap, throttleTime } from 'rxjs/operators';
 
 import { Bar } from '../../models/bar';
 import { BarService } from '../../services/bar.service';
@@ -9,16 +12,27 @@ import { BarService } from '../../services/bar.service';
   styleUrls: ['./bar.component.scss']
 })
 export class BarComponent implements OnInit {
-  bars: Bar[];
+  currentPage: number = 0;
+
+  bars: Bar[] = [];
 
   constructor(private barService : BarService) { }
 
-  getBars(): void {
-    this.barService.getBars().subscribe(bars => this.bars = bars);
+  private getLatestBars(): void {
+    this.barService.getLatestBars(this.currentPage)
+                   .subscribe(this.processData);
+    this.currentPage++;
+  }
+
+  private processData = (bars) => {
+    this.bars.push.apply(this.bars, bars);
   }
 
   ngOnInit() {
-    this.getBars();
+    this.getLatestBars();
   }
 
+  onScroll() {
+    this.getLatestBars();
+  }
 }
