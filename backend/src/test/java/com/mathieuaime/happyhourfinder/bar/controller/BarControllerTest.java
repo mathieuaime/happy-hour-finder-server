@@ -73,9 +73,13 @@ public class BarControllerTest {
 
   private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1").coordinates(POINT_1).build();
   private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
+  private static final Bar BAR_3 = Bar.builder().id(3L).name("Bar3").build();
 
-  private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1").build();
-  private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2").build();
+  private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1").coordinates(POINT_1)
+      .build();
+  private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2").coordinates(POINT_2)
+      .build();
+  private static final BarDto BAR_DTO_3 = BarDto.builder().id(3L).name("Bar3").build();
 
   /**
    * Set up the mocks.
@@ -84,8 +88,10 @@ public class BarControllerTest {
   public void setUp() {
     Mockito.when(modelMapper.map(BAR_1, BarDto.class)).thenReturn(BAR_DTO_1);
     Mockito.when(modelMapper.map(BAR_2, BarDto.class)).thenReturn(BAR_DTO_2);
+    Mockito.when(modelMapper.map(BAR_3, BarDto.class)).thenReturn(BAR_DTO_3);
     Mockito.when(modelMapper.map(BAR_DTO_1, Bar.class)).thenReturn(BAR_1);
     Mockito.when(modelMapper.map(BAR_DTO_2, Bar.class)).thenReturn(BAR_2);
+    Mockito.when(modelMapper.map(BAR_DTO_3, Bar.class)).thenReturn(BAR_3);
   }
 
   @After
@@ -151,11 +157,7 @@ public class BarControllerTest {
   @Test
   public void saveBar() throws Exception {
 
-    when(barService.save(any(Bar.class))).then(invocationOnMock -> {
-      Bar bar = invocationOnMock.getArgument(0);
-      bar.setId(1L);
-      return bar;
-    });
+    when(barService.save(any(Bar.class))).then(invocationOnMock -> BAR_1);
 
     mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
@@ -171,21 +173,14 @@ public class BarControllerTest {
 
   @Test
   public void saveBarWithNullCoordinates() throws Exception {
-    BarDto barDto = new BarDto();
-    barDto.setName("Bar");
-
-    when(barService.save(any(Bar.class))).then(invocationOnMock -> {
-      Bar bar = invocationOnMock.getArgument(0);
-      bar.setId(1L);
-      return bar;
-    });
+    when(barService.save(any(Bar.class))).then(invocationOnMock -> BAR_3);
 
     mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(barDto)))
+        .content(objectMapper.writeValueAsString(BAR_DTO_3)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(1)))
-        .andExpect(jsonPath("$.name", is("Bar")))
+        .andExpect(jsonPath("$.id", is(3)))
+        .andExpect(jsonPath("$.name", is("Bar3")))
         .andExpect(jsonPath("$.coordinates", nullValue()));
 
     verify(barService, times(1)).save(any(Bar.class));
