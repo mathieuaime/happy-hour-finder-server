@@ -11,18 +11,16 @@ When it will work
 - Hibernate 5.4.0
 - Angular 7
 
-- Circle CI : https://circleci.com/gh/mathieuaime/happy-hour-finder-server
+- Circle CI :
+[![CircleCI](https://circleci.com/gh/mathieuaime/happy-hour-finder-server/tree/master.svg?style=svg)](https://circleci.com/gh/mathieuaime/happy-hour-finder-server/tree/master)
 
-[![CircleCI](https://circleci.com/gh/mathieuaime/happy-hour-finder-server/tree/dev.svg?style=svg)](https://circleci.com/gh/mathieuaime/happy-hour-finder-server/tree/dev)
-
-- Sonarcloud : https://sonarcloud.io/dashboard?id=com.mathieuaime%3Ahappy-hour-finder-backend
-
-[![Lines of codes](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=ncloc&branch=dev)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=coverage&branch=dev)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
-[![Code smells](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=code_smells&branch=dev)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
-[![Technical debt](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=sqale_index&branch=dev)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=bugs&branch=dev)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=vulnerabilities&branch=dev)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
+- Sonarcloud :
+[![Lines of codes](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=ncloc&branch=master)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=coverage&branch=master)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
+[![Code smells](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=code_smells&branch=master)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
+[![Technical debt](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=sqale_index&branch=master)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=bugs&branch=master)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.mathieuaime:happy-hour-finder-backend&metric=vulnerabilities&branch=master)](https://sonarcloud.io/dashboard?id=com.mathieuaime:happy-hour-finder-backend)
 
 # Usage
 1. Lauch the backend
