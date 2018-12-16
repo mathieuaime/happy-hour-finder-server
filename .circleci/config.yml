@@ -64,7 +64,7 @@ jobs:
           path: target/surefire-reports
 
       - store_artifacts:
-          path: target/happy-hour-finder-backend-1.1.0-SNAPSHOT.jar
+          path: target/happy-hour-finder-backend-1.1.0.jar
 
   build_front:
     working_directory: ~/happy-hour-finder-server/frontend
@@ -108,7 +108,7 @@ jobs:
             - dist
 
       - store_artifacts:
-          path: target/happy-hour-finder-frontend-1.1.0-SNAPSHOT.jar
+          path: target/happy-hour-finder-frontend-1.1.0.jar
 
 workflows:
   version: 2
