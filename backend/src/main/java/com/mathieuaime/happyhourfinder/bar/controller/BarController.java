@@ -1,7 +1,7 @@
 package com.mathieuaime.happyhourfinder.bar.controller;
 
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
-import com.mathieuaime.happyhourfinder.bar.error.BarNotFoundException;
+import com.mathieuaime.happyhourfinder.bar.exception.BarNotFoundException;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
 import com.mathieuaime.happyhourfinder.common.constants.Paths;

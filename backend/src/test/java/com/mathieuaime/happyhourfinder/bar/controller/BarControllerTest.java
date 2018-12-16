@@ -25,16 +25,16 @@ import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +75,11 @@ public class BarControllerTest {
   private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
   private static final Bar BAR_3 = Bar.builder().id(3L).name("Bar3").build();
 
-  private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1").coordinates(POINT_1)
+  private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1")
+      .coordinates("POINT (1.0 2.0)")
       .build();
-  private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2").coordinates(POINT_2)
+  private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2")
+      .coordinates("POINT (2.0 3.0)")
       .build();
   private static final BarDto BAR_DTO_3 = BarDto.builder().id(3L).name("Bar3").build();
 

@@ -1,4 +1,4 @@
-package com.mathieuaime.happyhourfinder.bar.error;
+package com.mathieuaime.happyhourfinder.bar.exception;
 
 import com.mathieuaime.happyhourfinder.common.error.NotFoundException;
 

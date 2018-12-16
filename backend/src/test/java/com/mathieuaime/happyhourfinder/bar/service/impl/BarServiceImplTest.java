@@ -13,14 +13,14 @@ import static org.mockito.Mockito.when;
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
@@ -44,12 +44,12 @@ public class BarServiceImplTest {
       .coordinates(geometryFactory.createPoint(new Coordinate(2, 3))).build();
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     mockBarService = new BarServiceImpl(barDao);
   }
 
   @Test
-  public void testFindAll() throws Exception {
+  public void testFindAll() {
     Page<Bar> bars = new PageImpl<>(Arrays.asList(BAR_1, BAR_2));
 
     when(barDao.findAll(any(Pageable.class))).thenReturn(bars);
@@ -62,7 +62,7 @@ public class BarServiceImplTest {
   }
 
   @Test
-  public void testFindById() throws Exception {
+  public void testFindById() {
     when(barDao.findById(BAR_1.getId())).thenReturn(Optional.of(BAR_1));
     Optional<Bar> retrivedBar = mockBarService.findById(BAR_1.getId());
 
@@ -74,7 +74,7 @@ public class BarServiceImplTest {
   }
 
   @Test
-  public void testSave() throws Exception {
+  public void testSave() {
     Bar bar = Bar.builder().name("Bar1").build();
     when(barDao.save(bar)).then(invocationOnMock -> {
       Bar invocBar = invocationOnMock.getArgument(0);
@@ -92,7 +92,7 @@ public class BarServiceImplTest {
   }
 
   @Test
-  public void testDeleteById() throws Exception {
+  public void testDeleteById() {
     doNothing().when(barDao).deleteById(BAR_1.getId());
     mockBarService.deleteById(BAR_1.getId());
 

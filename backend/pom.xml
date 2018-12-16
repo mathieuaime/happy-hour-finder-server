@@ -19,7 +19,7 @@
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
         <checkstyle.version>8.11</checkstyle.version>
         <maven-checkstyle-plugin.configLocation>google_checks.xml</maven-checkstyle-plugin.configLocation>
-        <hibernate-spatial.version>5.3.6.Final</hibernate-spatial.version>
+        <hibernate.version>5.4.0.Final</hibernate.version>
     </properties>
 
     <dependencies>
@@ -46,13 +46,17 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-spatial</artifactId>
-            <version>${hibernate-spatial.version}</version>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

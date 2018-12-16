@@ -13,5 +13,4 @@ public class HappyHourFinderApplicationTests {
   public void contextLoads() {
     HappyHourFinderApplication.main(new String[]{});
   }
-
 }

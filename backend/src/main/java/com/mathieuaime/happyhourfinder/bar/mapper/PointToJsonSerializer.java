@@ -3,8 +3,8 @@ package com.mathieuaime.happyhourfinder.bar.mapper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
+import org.locationtech.jts.geom.Point;
 
 public class PointToJsonSerializer extends JsonSerializer<Point> {
 
