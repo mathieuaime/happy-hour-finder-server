@@ -13,8 +13,6 @@ const BARS_URL = 'bars';
 })
 export class BarService {
 
-  bars: Bar[];
-
   constructor(private http: HttpClient) { }
 
   getLatestBars (page: number) : Observable<Bar[]> {

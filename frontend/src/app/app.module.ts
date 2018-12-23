@@ -14,6 +14,8 @@ import { BarComponent } from 'components/bar/bar.component';
 import { AboutComponent } from 'components/about/about.component';
 import { HomeComponent } from 'components/home/home.component';
 import { BarCardComponent } from 'components/bar-card/bar-card.component';
+import { TimelineComponent } from 'components/timeline/timeline.component';
+import { TimelineRowComponent } from 'components/timeline-row/timeline-row.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { BarCardComponent } from 'components/bar-card/bar-card.component';
     HomeComponent,
     HeaderComponent,
     FooterComponent,
-    BarCardComponent
+    BarCardComponent,
+    TimelineComponent,
+    TimelineRowComponent
   ],
   imports: [
     BrowserModule,

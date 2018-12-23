@@ -2,25 +2,27 @@ import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 
-import { AboutComponent } from './about.component';
+import { TimelineComponent } from './timeline.component';
 
-describe('AboutComponent', () => {
-  let component: AboutComponent;
-  let fixture: ComponentFixture<AboutComponent>;
+import { Release } from '../../models/release';
+
+describe('TimelineComponent', () => {
+  let component: TimelineComponent;
+  let fixture: ComponentFixture<TimelineComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
       declarations: [
-        AboutComponent,
-        MockTimelineComponent
+        TimelineComponent,
+        MockTimelineRowComponent
       ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AboutComponent);
+    fixture = TestBed.createComponent(TimelineComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -31,8 +33,9 @@ describe('AboutComponent', () => {
 });
 
 @Component({
-  selector: 'app-timeline',
+  selector: 'app-timeline-row',
   template: ''
 })
-class MockTimelineComponent {
+class MockTimelineRowComponent {
+  @Input() release: Release;
 }
