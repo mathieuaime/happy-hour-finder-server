@@ -1,12 +1,8 @@
-<div class="container">
-  <div class="row">
-    <div class="mb-3">
-      <h4>Latest News</h4>
-      <ul class="timeline">
-        <li *ngFor="let release of releases">
-          <app-timeline-row [release]="release"></app-timeline-row>
-        </li>
-      </ul>
-    </div>
-  </div>
+<div class="mb-3">
+  <h4>Latest Releases</h4>
+  <ul class="timeline">
+    <li *ngFor="let release of releases">
+      <app-timeline-row [release]="release"></app-timeline-row>
+    </li>
+  </ul>
 </div>

@@ -1,7 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap, scan, mergeMap, throttleTime } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
 
 import { Bar } from '../../models/bar';
 import { BarService } from '../../services/bar.service';

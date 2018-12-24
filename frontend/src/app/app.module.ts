@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll'
+import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 
 //Components
 import { AppComponent } from './app.component';
