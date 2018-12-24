@@ -54,7 +54,7 @@ jobs:
 
       - run:
           name: Packaging
-          command: mvn package
+          command: mvn package -DskipTests
 
       - store_test_results:
           path: target/surefire-reports
