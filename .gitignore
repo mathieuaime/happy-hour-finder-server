@@ -27,6 +27,7 @@
 *.versionsBackup
 
 backend/target
+backend/src/main/resources/google.properties
 
 frontend/dist/
 frontend/node/

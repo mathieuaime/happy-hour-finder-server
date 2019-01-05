@@ -31,7 +31,7 @@ public class BarController {
     this.modelMapper = modelMapper;
   }
 
-  @GetMapping("/status/check")
+  @GetMapping("status/check")
   public String status() {
     return "working";
   }
@@ -48,7 +48,7 @@ public class BarController {
    * @param id the id
    * @return the bar dto
    */
-  @GetMapping("/{id}")
+  @GetMapping("{id}")
   public BarDto getBar(@PathVariable Long id) {
     return barService.findById(id)
         .map(this::convertToDto)
@@ -61,7 +61,7 @@ public class BarController {
     return convertToDto(bar);
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("{id}")
   public void deleteBar(@PathVariable Long id) {
     barService.deleteById(id);
   }
