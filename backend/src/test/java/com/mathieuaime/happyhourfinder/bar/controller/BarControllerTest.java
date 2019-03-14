@@ -57,7 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BarController.class)
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(outputDir = "target/generated-sources/snippets")
 public class BarControllerTest {
 
   @Autowired

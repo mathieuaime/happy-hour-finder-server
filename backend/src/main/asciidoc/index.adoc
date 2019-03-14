@@ -1,0 +1,11 @@
+:sectnums:
+:sectnumlevels: 5
+:toc: left
+:toclevels: 3
+:page-layout: docs
+
+= Bar API
+
+[[examples]]
+== Examples
+include::bar/index.adoc[]
