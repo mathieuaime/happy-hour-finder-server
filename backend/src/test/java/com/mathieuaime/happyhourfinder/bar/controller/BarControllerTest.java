@@ -8,12 +8,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,10 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
+import com.mathieuaime.happyhourfinder.bar.exception.BarNotFoundException;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
 import java.util.Arrays;
-import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,25 +39,17 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BarController.class)
-@AutoConfigureRestDocs
 public class BarControllerTest {
 
   @Autowired
@@ -110,22 +102,6 @@ public class BarControllerTest {
     verifyNoMoreInteractions(barService);
   }
 
-  @TestConfiguration
-  static class CustomizationConfiguration implements RestDocsMockMvcConfigurationCustomizer {
-
-    @Override
-    public void customize(MockMvcRestDocumentationConfigurer configurer) {
-      configurer.operationPreprocessors()
-          .withRequestDefaults(prettyPrint())
-          .withResponseDefaults(prettyPrint());
-    }
-
-    @Bean
-    public RestDocumentationResultHandler restDocumentation() {
-      return MockMvcRestDocumentation.document("{method-name}");
-    }
-  }
-
   @Test
   public void getStatus() throws Exception {
     mockMvc.perform(get(VERSION + BARS + STATUS)
@@ -158,7 +134,7 @@ public class BarControllerTest {
   public void getBarById() throws Exception {
     Long barId = BAR_1.getId();
 
-    when(barService.findById(barId)).thenReturn(Optional.of(BAR_1));
+    when(barService.findById(barId)).thenReturn(BAR_1);
 
     mockMvc.perform(get(VERSION + BARS + "{id}", barId)
         .contentType(APPLICATION_JSON))
@@ -173,6 +149,8 @@ public class BarControllerTest {
   @Test
   public void getBarByIdNotFound() throws Exception {
     Long barId = BAR_1.getId();
+
+    when(barService.findById(barId)).thenThrow(new BarNotFoundException(barId));
 
     mockMvc.perform(get(VERSION + BARS + "{id}", 1L)
         .contentType(APPLICATION_JSON))
@@ -189,7 +167,7 @@ public class BarControllerTest {
     mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(BAR_DTO_1)))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")));
@@ -205,7 +183,7 @@ public class BarControllerTest {
     mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(BAR_DTO_3)))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(3)))
         .andExpect(jsonPath("$.name", is("Bar3")))
         .andExpect(jsonPath("$.coordinates", nullValue()));
@@ -220,7 +198,19 @@ public class BarControllerTest {
     doNothing().when(barService).deleteById(barId);
 
     mockMvc.perform(delete(VERSION + BARS + "{id}", barId))
-        .andExpect(status().isOk());
+        .andExpect(status().isAccepted());
+
+    verify(barService, times(1)).deleteById(barId);
+  }
+
+  @Test
+  public void removeBarNotFound() throws Exception {
+    Long barId = BAR_1.getId();
+
+    doThrow(new BarNotFoundException(barId)).when(barService).deleteById(barId);
+
+    mockMvc.perform(delete(VERSION + BARS + "{id}", barId))
+        .andExpect(status().isNotFound());
 
     verify(barService, times(1)).deleteById(barId);
   }

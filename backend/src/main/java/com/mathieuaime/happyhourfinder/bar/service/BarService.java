@@ -10,9 +10,9 @@ public interface BarService {
 
   Page<Bar> findAll(Pageable pageable);
 
-  Optional<Bar> findById(Long id);
+  Bar findById(long id);
 
   Bar save(Bar bar);
 
-  void deleteById(Long barId);
+  void deleteById(long barId);
 }

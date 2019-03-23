@@ -1,16 +1,17 @@
 package com.mathieuaime.happyhourfinder.bar.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
+import com.mathieuaime.happyhourfinder.bar.exception.BarNotFoundException;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -64,13 +66,19 @@ public class BarServiceImplTest {
   @Test
   public void testFindById() {
     when(barDao.findById(BAR_1.getId())).thenReturn(Optional.of(BAR_1));
-    Optional<Bar> retrivedBar = mockBarService.findById(BAR_1.getId());
+    Bar retrivedBar = mockBarService.findById(BAR_1.getId());
 
-    assertTrue(retrivedBar.isPresent());
-    assertEquals(BAR_1, retrivedBar.get());
+    assertEquals(BAR_1, retrivedBar);
 
     verify(barDao, times(1)).findById(anyLong());
     verifyNoMoreInteractions(barDao);
+  }
+
+  @Test(expected = BarNotFoundException.class)
+  public void testFindByIdNotFound() {
+    when(barDao.findById(BAR_1.getId())).thenReturn(Optional.empty());
+
+    mockBarService.findById(BAR_1.getId());
   }
 
   @Test
@@ -98,6 +106,12 @@ public class BarServiceImplTest {
 
     verify(barDao, times(1)).deleteById(anyLong());
     verifyNoMoreInteractions(barDao);
+  }
+
+  @Test(expected = BarNotFoundException.class)
+  public void testDeleteByIdNotFound() {
+    doThrow(new EmptyResultDataAccessException(1)).when(barDao).deleteById(BAR_1.getId());
+    mockBarService.deleteById(BAR_1.getId());
   }
 
 }
