@@ -1,0 +1,4 @@
+[[bars_find_all]]
+=== Find all bars
+
+include::success.adoc[]
