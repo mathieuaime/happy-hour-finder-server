@@ -1,103 +1,119 @@
-version: 2
+version: 2.1
+
+executors:
+  executor-back:
+    working_directory: /tmp
+    docker:
+      - image: buildpack-deps:jessie
+        environment:
+          VERSION: 1.2.0-SNAPSHOT
+          IMAGE_NAME: mathieuaime/happyhourfinder-backend
+
 jobs:
   build_back:
-    working_directory: ~/happy-hour-finder-server/backend
-
+    executor: executor-back
+    working_directory: /tmp/happy-hour-finder-server/backend
     docker:
       - image: circleci/openjdk:8-jdk
         environment:
           MAVEN_OPTS: -Xmx3200m
-
       - image: circleci/mysql
         environment:
           MYSQL_USER: root
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: happyhourfinder
-
     steps:
       - checkout:
-          path: ~/happy-hour-finder-server
-
+          path: /tmp/happy-hour-finder-server
       - run:
           name: Show current branch
           command: echo ${CIRCLE_BRANCH}
-
+      - run:
+          name: Show version
+          command: echo $VERSION ${VERSION}
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
             - v1-dependencies-
-
       - run:
           name: Install dependencies
           command: mvn dependency:go-offline
-
       - save_cache:
           key: v1-dependencies-{{ checksum "pom.xml" }}
           paths:
             - ~/.m2
-
       - run:
           name: Integration tests
           command: mvn integration-test
-
       - run:
           name: Checkstyle
           command: mvn checkstyle:checkstyle
-
       - run:
           name: Generate Code Coverage Report
           command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
-
       - run:
           name: Run Code Quality Analysis
           command: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${CIRCLE_BRANCH}
-
       - run:
           name: Packaging
           command: mvn package -DskipTests
-
       - store_test_results:
           path: target/surefire-reports
-
       - store_artifacts:
-          path: target/happy-hour-finder-backend-1.2.0-SNAPSHOT.jar
+          path: target/happy-hour-finder-backend-$VERSION.jar
+      - run:
+          name: Persisting artifact
+          command: mkdir /tmp/workspace && cp target/*.jar /tmp/workspace/
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - happy-hour-finder-backend-$VERSION.jar
+
+  publish_back:
+    executor: executor-back
+    working_directory: /tmp/happy-hour-finder-server/backend
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout:
+          path: /tmp/happy-hour-finder-server
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: docker build --build-arg JAR_FILE=/tmp/workspace/happy-hour-finder-backend-$VERSION.jar -t $IMAGE_NAME:$VERSION .
+      - run:
+          name: Push Docker Image
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:$VERSION
 
   build_front:
-    working_directory: ~/happy-hour-finder-server/frontend
-
+    working_directory: /tmp/happy-hour-finder-server/frontend
     docker:
       - image: circleci/node:10.7.0-browsers
-
     steps:
       - checkout:
-          path: ~/happy-hour-finder-server
-
+          path: /tmp/happy-hour-finder-server
       - run:
           name: Show current branch
           command: echo ${CIRCLE_BRANCH}
-
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies-
-
       - run:
           name: Install local dependencies
           command: npm install
-
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
-
       - run:
           name: Testing
           command: npm run test
-
       - run:
           name: Building
           command: npm run build
-
       - save_cache:
           key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -105,8 +121,10 @@ jobs:
 
 workflows:
   version: 2
-
   build:
     jobs:
       - build_back
+      - publish_back:
+          requires:
+            - build_back
       - build_front
