@@ -41,6 +41,7 @@ jobs:
       - run:
           name: Show current branch
           command: echo ${CIRCLE_BRANCH}
+
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
@@ -66,6 +67,7 @@ jobs:
           name: Integration tests
           command: mvn integration-test
       - run:
+
           name: Generate Code Coverage Report
           command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
       - run:
