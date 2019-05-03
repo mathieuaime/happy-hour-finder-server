@@ -106,6 +106,13 @@ jobs:
             docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
             docker push $IMAGE_NAME:${CIRCLE_BRANCH}
 
+  deploy_back:
+    executor: executor-buildpack
+    steps:
+      - run:
+          name: Deploying Back
+          command: echo "Deploy !"
+
   build_front:
     executor: executor-node
     steps:
