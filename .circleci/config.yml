@@ -127,6 +127,11 @@ workflows:
       - publish_back:
           requires:
             - integration_tests_back
+          filters:
+            branches:
+              only:
+                - master
+                - dev
       - deploy_back:
           requires:
             - publish_back
