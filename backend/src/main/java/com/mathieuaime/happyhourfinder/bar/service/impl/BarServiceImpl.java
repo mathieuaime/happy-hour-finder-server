@@ -17,7 +17,7 @@ public class BarServiceImpl implements BarService {
   private final BarDao barDao;
 
   @Autowired
-  public BarServiceImpl(BarDao barDao) {
+  BarServiceImpl(BarDao barDao) {
     this.barDao = barDao;
   }
 

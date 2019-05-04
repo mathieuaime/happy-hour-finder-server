@@ -23,9 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
+import com.mathieuaime.happyhourfinder.bar.dto.HappyHourDto;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
+import com.mathieuaime.happyhourfinder.bar.model.HappyHour;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
 import com.mathieuaime.happyhourfinder.type.IntegrationTest;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.After;
@@ -74,12 +78,22 @@ public class BarControllerTest {
   private static final Point POINT_1 = geometryFactory.createPoint(new Coordinate(1, 2));
   private static final Point POINT_2 = geometryFactory.createPoint(new Coordinate(2, 3));
 
-  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1").coordinates(POINT_1).build();
+  private static final HappyHour HAPPY_HOUR = new HappyHour(LocalTime.of(16, 0),
+      Duration.ofHours(1));
+
+  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1").coordinates(POINT_1)
+      .happyHour(HAPPY_HOUR).build();
   private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
   private static final Bar BAR_3 = Bar.builder().id(3L).name("Bar3").build();
 
+  private static final HappyHourDto HAPPY_HOUR_DTO = HappyHourDto.builder()
+      .begin(LocalTime.of(16, 0))
+      .duration(Duration.ofHours(1))
+      .build();
+
   private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1")
       .coordinates("POINT (1.0 2.0)")
+      .happyHour(HAPPY_HOUR_DTO)
       .build();
   private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2")
       .coordinates("POINT (2.0 3.0)")
@@ -143,7 +157,9 @@ public class BarControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.name", is("Bar1")))
-        .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")));
+        .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")))
+        .andExpect(jsonPath("$.happyHour.begin", is("16:00")))
+        .andExpect(jsonPath("$.happyHour.end", is("17:00")));
 
     verify(barService, times(1)).findById(barId);
   }

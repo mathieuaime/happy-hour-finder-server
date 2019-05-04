@@ -1,13 +1,12 @@
 package com.mathieuaime.happyhourfinder.bar.dto;
 
-import java.io.Serializable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
 @Data
 @Builder
-public class BarDto implements Serializable {
+public class BarDto {
 
   private Long id;
 
@@ -15,4 +14,6 @@ public class BarDto implements Serializable {
   private String name;
 
   private String coordinates;
+
+  private HappyHourDto happyHour;
 }
