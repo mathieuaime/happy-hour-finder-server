@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  aws-ecr: circleci/aws-ecr@1.0.0
+
 executors:
   executor-java:
     working_directory: /tmp/happy-hour-finder-server/backend
@@ -84,13 +87,6 @@ jobs:
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
 
-  deploy_back:
-    executor: executor-buildpack
-    steps:
-      - run:
-          name: Deploying Back
-          command: echo "Deploy !"
-
   build_front:
     executor: executor-node
     steps:
@@ -136,16 +132,9 @@ jobs:
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
 
-  deploy_front:
-    executor: executor-buildpack
-    steps:
-      - run:
-          name: Deploying front
-          command: echo "Deploy !"
-
 workflows:
   version: 2
-  build:
+  backend:
     jobs:
       - install_back
       - integration_tests_back:
@@ -154,17 +143,29 @@ workflows:
       - publish_back:
           requires:
             - integration_tests_back
+      - aws-ecr/build_and_push_image:
+          repo: ${CIRCLE_PROJECT_REPONAME}
+          path: backend
+          dockerfile: backend/Dockerfile
+          tag: stage_backend_${CIRCLE_BUILD_NUM}
+          requires:
+            - integration_tests_back
           filters:
             branches:
               only:
                 - master
                 - dev
-      - deploy_back:
-          requires:
-            - publish_back
-
+  frontend:
+    jobs:
       - build_front
       - publish_front:
+          requires:
+            - build_front
+      - aws-ecr/build_and_push_image:
+          repo: ${CIRCLE_PROJECT_REPONAME}
+          path: frontend
+          dockerfile: frontend/Dockerfile
+          tag: stage_frontend_${CIRCLE_BUILD_NUM}
           requires:
             - build_front
           filters:
@@ -172,7 +173,3 @@ workflows:
               only:
                 - master
                 - dev
-                - DOCKER
-      - deploy_front:
-          requires:
-            - publish_front
