@@ -14,6 +14,13 @@ executors:
           MYSQL_USER: root
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: happyhourfinder
+  executor-node:
+    working_directory: /tmp/happy-hour-finder-server/frontend
+    docker:
+      - image: circleci/node:10.7.0-browsers
+    environment:
+      VERSION: 1.2.0-SNAPSHOT
+      IMAGE_NAME: mathieuaime/happyhourfinder-frontend
   executor-buildpack:
     working_directory: /tmp/happy-hour-finder-server/backend
     docker:
@@ -85,9 +92,7 @@ jobs:
           command: echo "Deploy !"
 
   build_front:
-    working_directory: /tmp/happy-hour-finder-server/frontend
-    docker:
-      - image: circleci/node:10.7.0-browsers
+    executor: executor-node
     steps:
       - checkout:
           path: /tmp/happy-hour-finder-server
@@ -116,6 +121,28 @@ jobs:
           paths:
             - dist
 
+  publish_front:
+    executor: executor-node
+    steps:
+      - checkout:
+          path: /tmp/happy-hour-finder-server
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: docker build -t $IMAGE_NAME:$VERSION .
+      - run:
+          name: Push Docker Image
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:$VERSION
+
+  deploy_front:
+    executor: executor-buildpack
+    steps:
+      - run:
+          name: Deploying front
+          command: echo "Deploy !"
+
 workflows:
   version: 2
   build:
@@ -135,4 +162,17 @@ workflows:
       - deploy_back:
           requires:
             - publish_back
+
       - build_front
+      - publish_front:
+          requires:
+            - build_front
+          filters:
+            branches:
+              only:
+                - master
+                - dev
+                - DOCKER
+      - deploy_front:
+          requires:
+            - publish_front
