@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  aws-ecr: circleci/aws-ecr@1.0.0
-
 executors:
   executor-java:
     working_directory: /tmp/happy-hour-finder-server/backend
@@ -80,12 +77,13 @@ jobs:
           command: mvn package -DskipTests
       - run:
           name: Build Docker Image
-          command: docker build --build-arg JAR_FILE=target/happy-hour-finder-backend-$VERSION.jar -t $IMAGE_NAME:$VERSION .
+          command: docker build -t $IMAGE_NAME:$VERSION .
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
+            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
 
   build_front:
     executor: executor-node
@@ -131,6 +129,7 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
+            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
 
 workflows:
   version: 2
@@ -143,13 +142,6 @@ workflows:
       - publish_back:
           requires:
             - integration_tests_back
-      - aws-ecr/build_and_push_image:
-          repo: ${CIRCLE_PROJECT_REPONAME}
-          path: backend
-          dockerfile: backend/Dockerfile
-          tag: stage_backend_${CIRCLE_BUILD_NUM}
-          requires:
-            - integration_tests_back
           filters:
             branches:
               only:
@@ -159,13 +151,6 @@ workflows:
     jobs:
       - build_front
       - publish_front:
-          requires:
-            - build_front
-      - aws-ecr/build_and_push_image:
-          repo: ${CIRCLE_PROJECT_REPONAME}
-          path: frontend
-          dockerfile: frontend/Dockerfile
-          tag: stage_frontend_${CIRCLE_BUILD_NUM}
           requires:
             - build_front
           filters:

@@ -1,0 +1,39 @@
+version: '3'
+services:
+  mysql_db:
+    restart: always
+    networks:
+      - backend-network
+    container_name: mysql_db
+    image: mysql/mysql-server:5.7
+    volumes:
+      - /data/hapyhourfinder
+    environment:
+      MYSQL_DATABASE: happyhourfinder
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_HOST: '%'
+
+  api:
+    restart: always
+    image: mathieuaime/happyhourfinder-backend:${BACK_VERSION}
+    networks:
+      - backend-network
+      - frontend-network
+    ports:
+     - "8088:8088"
+    depends_on:
+      - mysql_db
+
+  frontend:
+    restart: always
+    image: mathieuaime/happyhourfinder-frontend:${FRONT_VERSION}
+    networks:
+      - frontend-network
+    ports:
+     - "4200:4200"
+
+networks:
+  backend-network:
+    driver: bridge
+  frontend-network:
+    driver: bridge

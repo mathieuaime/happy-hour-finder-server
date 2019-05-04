@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { Bar } from '../models/bar';
 
-const API_URL = 'http://localhost:8088/';
+const API_URL = 'http://api:8088/';
 const BARS_URL = 'bars';
 
 @Injectable({

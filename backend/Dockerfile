@@ -4,10 +4,8 @@ LABEL maintainer="aime.mathieu1@gmail.com"
 
 VOLUME /tmp
 
-EXPOSE 8080
+EXPOSE 8088
 
-ARG JAR_FILE
-
-COPY ${JAR_FILE} app.jar
+COPY target/happy-hour-finder-backend-*.jar app.jar
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
