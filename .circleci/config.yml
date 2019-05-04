@@ -83,6 +83,7 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
+            docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
             docker push $IMAGE_NAME:${CIRCLE_BRANCH}
 
   build_front:
@@ -129,6 +130,7 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
+            docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
             docker push $IMAGE_NAME:${CIRCLE_BRANCH}
 
 workflows:
