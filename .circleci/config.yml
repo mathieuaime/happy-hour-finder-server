@@ -9,6 +9,12 @@ executors:
           VERSION: 1.2.0-SNAPSHOT
           IMAGE_NAME: mathieuaime/happyhourfinder-backend
           MAVEN_OPTS: -Xmx3200m
+  executor-int:
+    working_directory: /tmp/happy-hour-finder-server/backend
+    docker:
+      - image: circleci/openjdk:8-jdk
+        environment:
+          MAVEN_OPTS: -Xmx3200m
       - image: circleci/mysql
         environment:
           MYSQL_USER: root
@@ -48,7 +54,7 @@ jobs:
             - ~/.m2
 
   integration_tests_back:
-    executor: executor-java
+    executor: executor-int
     steps:
       - checkout:
           path: /tmp/happy-hour-finder-server
