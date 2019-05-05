@@ -79,11 +79,13 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <testFailureIgnore>true</testFailureIgnore>
                         <includes>
                             <include>**/*Test*.java</include>
                         </includes>
                         <argLine>${jacoco.agent.argLine}</argLine>
                         <useSystemClassLoader>false</useSystemClassLoader>
+                        <excludedGroups>${exclude.groups}</excludedGroups>
                     </configuration>
                 </plugin>
             </plugins>

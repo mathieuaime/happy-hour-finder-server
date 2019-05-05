@@ -27,7 +27,7 @@ executors:
       - image: buildpack-deps:stretch
 
 jobs:
-  install_back:
+  unit_tests_back:
     executor: executor-java
     steps:
       - checkout:
@@ -40,8 +40,8 @@ jobs:
             - v1-dependencies-{{ checksum "pom.xml" }}
             - v1-dependencies-
       - run:
-          name: Install dependencies
-          command: mvn dependency:go-offline
+          name: Unit tests
+          command: mvn test -P unit-tests
       - save_cache:
           key: v1-dependencies-{{ checksum "pom.xml" }}
           paths:
@@ -69,6 +69,10 @@ jobs:
           path: target/happy-hour-finder-backend-1.2.0-SNAPSHOT.jar
       - store_test_results:
           path: target/surefire-reports
+      - save_cache:
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
 
   publish_back:
     executor: executor-java
@@ -145,10 +149,10 @@ workflows:
   version: 2
   backend:
     jobs:
-      - install_back
+      - unit_tests_back
       - integration_tests_back:
           requires:
-            - install_back
+            - unit_tests_back
       - publish_back:
           requires:
             - integration_tests_back
