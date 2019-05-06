@@ -39,8 +39,9 @@ executors:
     environment:
       GOOGLE_PROJECT_ID: happyhourfinder
       GOOGLE_CLUSTER_NAME: happyhourfinder-cluster
+      PROJECT_NAME: happy-hour-finder
       BACK_IMAGE_NAME: happyhourfinder-backend
-      FRONT_IMAGE_NAME: happyhourfinder-backend
+      FRONT_IMAGE_NAME: happyhourfinder-frontend
 
 jobs:
   unit_tests_back:
@@ -148,12 +149,12 @@ jobs:
             docker tag ${BACK_IMAGE_NAME} eu.gcr.io/${GOOGLE_PROJECT_ID}/${BACK_IMAGE_NAME}:${CIRCLE_SHA1}
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
             docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/${BACK_IMAGE_NAME}:${CIRCLE_SHA1}
-#      - run:
-#          name: Deploy to Kubernetes
-#          command: |
-#            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
-#            kubectl apply -f ${HOME}/patched_k8s.yml
-#            kubectl rollout status deployment/${BACK_IMAGE_NAME}
+      - run:
+          name: Deploy to Kubernetes
+          command: |
+            envsubst < /tmp/happy-hour-finder-server/backend/k8s.yml > /tmp/patched_k8s.yml
+            kubectl apply -f /tmp/patched_k8s.yml
+            kubectl rollout status deployment/backend
       - save_cache:
           key: v1-dependencies-{{ checksum "pom.xml" }}
           paths:
@@ -232,23 +233,22 @@ jobs:
             docker tag ${FRONT_IMAGE_NAME} eu.gcr.io/${GOOGLE_PROJECT_ID}/${FRONT_IMAGE_NAME}:${CIRCLE_SHA1}
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
             docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/${FRONT_IMAGE_NAME}:${CIRCLE_SHA1}
-#      - run:
-#          name: Deploy to Kubernetes
-#          command: |
-#            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
-#            kubectl apply -f ${HOME}/patched_k8s.yml
-#            kubectl rollout status deployment/${FRONT_IMAGE_NAME}
+      - run:
+          name: Deploy to Kubernetes
+          command: |
+            envsubst < /tmp/happy-hour-finder-server/frontend/k8s.yml > /tmp/patched_k8s.yml
+            kubectl apply -f /tmp/patched_k8s.yml
+            kubectl rollout status deployment/frontend
 
 workflows:
   version: 2
   backend:
     jobs:
       - unit_tests_back
-      - integration_tests_back:
-          requires:
-            - unit_tests_back
+      - integration_tests_back
       - publish_back:
           requires:
+            - unit_tests_back
             - integration_tests_back
           filters:
             branches:
@@ -257,7 +257,7 @@ workflows:
                 - dev
       - deploy_back_to_staging:
           requires:
-            - integration_tests_back
+            - unit_tests_back
           filters:
             branches:
               only:
@@ -275,3 +275,12 @@ workflows:
               only:
                 - master
                 - dev
+      - deploy_front_to_staging:
+          requires:
+            - build_front
+          filters:
+            branches:
+              only:
+                - master
+                - dev
+                - GKE

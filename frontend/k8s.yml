@@ -1,0 +1,35 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: ${PROJECT_NAME}
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${PROJECT_NAME}
+      tier: frontend
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: ${PROJECT_NAME}
+        tier: frontend
+        track: stable
+    spec:
+      containers:
+      - name: frontend
+        image: eu.gcr.io/${GOOGLE_PROJECT_ID}/${FRONT_IMAGE_NAME}:${CIRCLE_SHA1}
