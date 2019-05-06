@@ -7,7 +7,8 @@ executors:
       - image: circleci/openjdk:8-jdk
         environment:
           VERSION: 1.2.0-SNAPSHOT
-          IMAGE_NAME: mathieuaime/happyhourfinder-backend
+          REPOSITORY: mathieuaime
+          IMAGE_NAME: happyhourfinder-backend
           MAVEN_OPTS: -Xmx3200m
   executor-int:
     working_directory: /tmp/happy-hour-finder-server/backend
@@ -26,11 +27,20 @@ executors:
       - image: circleci/node:10.7.0-browsers
     environment:
       VERSION: 1.2.0-SNAPSHOT
-      IMAGE_NAME: mathieuaime/happyhourfinder-frontend
+      REPOSITORY: mathieuaime
+      IMAGE_NAME: happyhourfinder-frontend
   executor-buildpack:
     working_directory: /tmp/happy-hour-finder-server/backend
     docker:
       - image: buildpack-deps:stretch
+  executor-gcloud:
+    docker:
+      - image: google/cloud-sdk
+    environment:
+      GOOGLE_PROJECT_ID: happyhourfinder
+      GOOGLE_CLUSTER_NAME: happyhourfinder-cluster
+      BACK_IMAGE_NAME: happyhourfinder-backend
+      FRONT_IMAGE_NAME: happyhourfinder-backend
 
 jobs:
   unit_tests_back:
@@ -95,14 +105,51 @@ jobs:
           command: mvn package -DskipTests
       - run:
           name: Build Docker Image
-          command: docker build -t $IMAGE_NAME:$VERSION .
+          command: docker build -t ${REPOSITORY}/$IMAGE_NAME:$VERSION .
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:$VERSION
-            docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
-            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
+            docker push ${REPOSITORY}/$IMAGE_NAME:$VERSION
+            docker tag ${REPOSITORY}/$IMAGE_NAME:$VERSION ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
+            docker push ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
+
+  deploy_to_staging:
+    working_directory: /tmp/happy-hour-finder-server/backend
+    executor: executor-gcloud
+    steps:
+      - checkout:
+          path: /tmp/happy-hour-finder-server
+      - run:
+          name: Install tools
+          command: |
+            apt-get install -qq -y gettext maven
+      - run:
+          name: Setup Google Cloud SDK
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+            gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - setup_remote_docker
+      - run:
+          name: Packaging
+          command: |
+            mvn package -DskipTests
+      - run:
+          name: Docker build and push
+          command: |
+            docker build -t ${BACK_IMAGE_NAME} .
+            docker tag ${BACK_IMAGE_NAME} eu.gcr.io/${GOOGLE_PROJECT_ID}/${BACK_IMAGE_NAME}:${CIRCLE_SHA1}
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+            docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/${BACK_IMAGE_NAME}:${CIRCLE_SHA1}
+#      - run:
+#          name: Deploy to Kubernetes
+#          command: |
+#            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
+#            kubectl apply -f ${HOME}/patched_k8s.yml
+#            kubectl rollout status deployment/${BACK_IMAGE_NAME}
 
   build_front:
     executor: executor-node
@@ -142,14 +189,14 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker Image
-          command: docker build -t $IMAGE_NAME:$VERSION .
+          command: docker build -t ${REPOSITORY}/$IMAGE_NAME:$VERSION .
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:$VERSION
-            docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
-            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
+            docker push ${REPOSITORY}/$IMAGE_NAME:$VERSION
+            docker tag ${REPOSITORY}/$IMAGE_NAME:$VERSION ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
+            docker push ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
 
 workflows:
   version: 2
@@ -167,6 +214,15 @@ workflows:
               only:
                 - master
                 - dev
+      - deploy_to_staging:
+          requires:
+            - integration_tests_back
+          filters:
+            branches:
+              only:
+                - master
+                - dev
+                - GKE
   frontend:
     jobs:
       - build_front
