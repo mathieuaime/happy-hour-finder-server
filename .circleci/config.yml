@@ -114,7 +114,7 @@ jobs:
             docker tag ${REPOSITORY}/$IMAGE_NAME:$VERSION ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
             docker push ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
 
-  deploy_to_staging:
+  deploy_back_to_staging:
     working_directory: /tmp/happy-hour-finder-server/backend
     executor: executor-gcloud
     steps:
@@ -133,6 +133,10 @@ jobs:
             gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
             gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
       - setup_remote_docker
+      - restore_cache:
+                keys:
+                  - v1-dependencies-{{ checksum "pom.xml" }}
+                  - v1-dependencies-
       - run:
           name: Packaging
           command: |
@@ -150,6 +154,10 @@ jobs:
 #            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
 #            kubectl apply -f ${HOME}/patched_k8s.yml
 #            kubectl rollout status deployment/${BACK_IMAGE_NAME}
+      - save_cache:
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
 
   build_front:
     executor: executor-node
@@ -198,6 +206,39 @@ jobs:
             docker tag ${REPOSITORY}/$IMAGE_NAME:$VERSION ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
             docker push ${REPOSITORY}/$IMAGE_NAME:${CIRCLE_BRANCH}
 
+  deploy_front_to_staging:
+    working_directory: /tmp/happy-hour-finder-server/frontend
+    executor: executor-gcloud
+    steps:
+      - checkout:
+          path: /tmp/happy-hour-finder-server
+      - run:
+          name: Install tools
+          command: |
+            apt-get install -qq -y gettext
+      - run:
+          name: Setup Google Cloud SDK
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+            gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - setup_remote_docker
+      - run:
+          name: Docker build and push
+          command: |
+            docker build -t ${FRONT_IMAGE_NAME} .
+            docker tag ${FRONT_IMAGE_NAME} eu.gcr.io/${GOOGLE_PROJECT_ID}/${FRONT_IMAGE_NAME}:${CIRCLE_SHA1}
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+            docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/${FRONT_IMAGE_NAME}:${CIRCLE_SHA1}
+#      - run:
+#          name: Deploy to Kubernetes
+#          command: |
+#            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
+#            kubectl apply -f ${HOME}/patched_k8s.yml
+#            kubectl rollout status deployment/${FRONT_IMAGE_NAME}
+
 workflows:
   version: 2
   backend:
@@ -214,7 +255,7 @@ workflows:
               only:
                 - master
                 - dev
-      - deploy_to_staging:
+      - deploy_back_to_staging:
           requires:
             - integration_tests_back
           filters:
