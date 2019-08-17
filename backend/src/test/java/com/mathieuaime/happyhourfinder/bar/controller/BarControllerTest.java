@@ -1,6 +1,6 @@
 package com.mathieuaime.happyhourfinder.bar.controller;
 
-import static com.mathieuaime.happyhourfinder.common.constants.Paths.BARS;
+import static com.mathieuaime.happyhourfinder.common.constants.Paths.Bar.BARS;
 import static com.mathieuaime.happyhourfinder.common.constants.Paths.STATUS;
 import static com.mathieuaime.happyhourfinder.common.constants.Paths.VERSION;
 import static org.hamcrest.Matchers.hasSize;
@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
 import com.mathieuaime.happyhourfinder.bar.dto.HappyHourDto;
+import com.mathieuaime.happyhourfinder.bar.mapper.BarMapper;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.bar.model.HappyHour;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
@@ -42,7 +43,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.Mockito;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -65,52 +65,44 @@ public class BarControllerTest {
   private BarService barService;
 
   @MockBean
-  private BarDao barDao;
+  private BarMapper barMapper;
 
   @MockBean
-  private ModelMapper modelMapper;
+  private BarDao barDao;
 
-  private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),
-      26910);
+  private static final GeometryFactory geometryFactory =
+      new GeometryFactory(new PrecisionModel(), 26910);
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
   private static final Point POINT_1 = geometryFactory.createPoint(new Coordinate(1, 2));
   private static final Point POINT_2 = geometryFactory.createPoint(new Coordinate(2, 3));
 
-  private static final HappyHour HAPPY_HOUR = new HappyHour(LocalTime.of(16, 0),
-      Duration.ofHours(1));
+  private static final HappyHour HAPPY_HOUR =
+      HappyHour.builder().begin(LocalTime.of(16, 0)).duration(Duration.ofHours(1)).build();
 
-  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1").coordinates(POINT_1)
-      .happyHour(HAPPY_HOUR).build();
+  private static final Bar BAR_1 =
+      Bar.builder().id(1L).name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR).build();
   private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
   private static final Bar BAR_3 = Bar.builder().id(3L).name("Bar3").build();
 
-  private static final HappyHourDto HAPPY_HOUR_DTO = HappyHourDto.builder()
-      .begin(LocalTime.of(16, 0))
-      .duration(Duration.ofHours(1))
-      .build();
+  private static final HappyHourDto HAPPY_HOUR_DTO =
+      HappyHourDto.builder().begin("16:00").duration("PT1H").build();
 
-  private static final BarDto BAR_DTO_1 = BarDto.builder().id(1L).name("Bar1")
-      .coordinates("POINT (1.0 2.0)")
-      .happyHour(HAPPY_HOUR_DTO)
-      .build();
-  private static final BarDto BAR_DTO_2 = BarDto.builder().id(2L).name("Bar2")
-      .coordinates("POINT (2.0 3.0)")
-      .build();
+  private static final BarDto BAR_DTO_1 =
+      BarDto.builder().id(1L).name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR_DTO).build();
+  private static final BarDto BAR_DTO_2 =
+      BarDto.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
   private static final BarDto BAR_DTO_3 = BarDto.builder().id(3L).name("Bar3").build();
 
-  /**
-   * Set up the mocks.
-   */
   @Before
   public void setUp() {
-    Mockito.when(modelMapper.map(BAR_1, BarDto.class)).thenReturn(BAR_DTO_1);
-    Mockito.when(modelMapper.map(BAR_2, BarDto.class)).thenReturn(BAR_DTO_2);
-    Mockito.when(modelMapper.map(BAR_3, BarDto.class)).thenReturn(BAR_DTO_3);
-    Mockito.when(modelMapper.map(BAR_DTO_1, Bar.class)).thenReturn(BAR_1);
-    Mockito.when(modelMapper.map(BAR_DTO_2, Bar.class)).thenReturn(BAR_2);
-    Mockito.when(modelMapper.map(BAR_DTO_3, Bar.class)).thenReturn(BAR_3);
+    Mockito.when(barMapper.convertToDto(BAR_1)).thenReturn(BAR_DTO_1);
+    Mockito.when(barMapper.convertToDto(BAR_2)).thenReturn(BAR_DTO_2);
+    Mockito.when(barMapper.convertToDto(BAR_3)).thenReturn(BAR_DTO_3);
+    Mockito.when(barMapper.convertToEntity(BAR_DTO_1)).thenReturn(BAR_1);
+    Mockito.when(barMapper.convertToEntity(BAR_DTO_2)).thenReturn(BAR_2);
+    Mockito.when(barMapper.convertToEntity(BAR_DTO_3)).thenReturn(BAR_3);
   }
 
   @After
@@ -159,7 +151,7 @@ public class BarControllerTest {
         .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")))
         .andExpect(jsonPath("$.happyHour.begin", is("16:00")))
-        .andExpect(jsonPath("$.happyHour.end", is("17:00")));
+        .andExpect(jsonPath("$.happyHour.duration", is("PT1H")));
 
     verify(barService, times(1)).findById(barId);
   }

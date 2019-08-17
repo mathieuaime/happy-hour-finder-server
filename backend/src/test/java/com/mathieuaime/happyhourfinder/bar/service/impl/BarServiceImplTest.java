@@ -82,10 +82,10 @@ public class BarServiceImplTest {
       return invocBar;
     });
 
-    Bar retrivedBar = mockBarService.save(bar);
+    Bar savedBar = mockBarService.save(bar);
 
-    assertEquals(Long.valueOf(1L), retrivedBar.getId());
-    assertEquals("Bar1", retrivedBar.getName());
+    assertEquals(Long.valueOf(1L), savedBar.getId());
+    assertEquals("Bar1", savedBar.getName());
 
     verify(barDao, times(1)).save(any(Bar.class));
     verifyNoMoreInteractions(barDao);
@@ -99,5 +99,4 @@ public class BarServiceImplTest {
     verify(barDao, times(1)).deleteById(anyLong());
     verifyNoMoreInteractions(barDao);
   }
-
 }

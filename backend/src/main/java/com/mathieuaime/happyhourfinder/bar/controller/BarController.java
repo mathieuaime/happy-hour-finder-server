@@ -2,10 +2,9 @@ package com.mathieuaime.happyhourfinder.bar.controller;
 
 import com.mathieuaime.happyhourfinder.bar.dto.BarDto;
 import com.mathieuaime.happyhourfinder.bar.exception.BarNotFoundException;
-import com.mathieuaime.happyhourfinder.bar.model.Bar;
+import com.mathieuaime.happyhourfinder.bar.mapper.BarMapper;
 import com.mathieuaime.happyhourfinder.bar.service.BarService;
 import com.mathieuaime.happyhourfinder.common.constants.Paths;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,59 +17,44 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = Paths.VERSION + Paths.BARS)
+@RequestMapping(value = Paths.VERSION + Paths.Bar.BARS)
 public class BarController {
 
   private final BarService barService;
-
-  private final ModelMapper modelMapper;
+  private final BarMapper barMapper;
 
   @Autowired
-  public BarController(BarService barService, ModelMapper modelMapper) {
+  public BarController(BarService barService, BarMapper barMapper) {
     this.barService = barService;
-    this.modelMapper = modelMapper;
+    this.barMapper = barMapper;
   }
 
-  @GetMapping("/status/check")
+  @GetMapping(Paths.STATUS)
   public String status() {
     return "working";
   }
 
   @GetMapping
   public Page<BarDto> getBars(Pageable pageable) {
-    return barService.findAll(pageable)
-        .map(this::convertToDto);
+    return barService.findAll(pageable).map(barMapper::convertToDto);
   }
 
-  /**
-   * Find a bar by its id.
-   *
-   * @param id the id
-   * @return the bar dto
-   */
   @GetMapping("/{id}")
   public BarDto getBar(@PathVariable Long id) {
     return barService.findById(id)
-        .map(this::convertToDto)
+        .map(barMapper::convertToDto)
         .orElseThrow(BarNotFoundException::new);
   }
 
   @PostMapping
   public BarDto saveBar(@RequestBody BarDto barDto) {
-    Bar bar = barService.save(convertToEntity(barDto));
-    return convertToDto(bar);
+    com.mathieuaime.happyhourfinder.bar.model.Bar bar = barService
+        .save(barMapper.convertToEntity(barDto));
+    return barMapper.convertToDto(bar);
   }
 
   @DeleteMapping("/{id}")
   public void deleteBar(@PathVariable Long id) {
     barService.deleteById(id);
-  }
-
-  private BarDto convertToDto(Bar bar) {
-    return modelMapper.map(bar, BarDto.class);
-  }
-
-  private Bar convertToEntity(BarDto barDto) {
-    return modelMapper.map(barDto, Bar.class);
   }
 }

@@ -4,11 +4,12 @@ import java.time.Duration;
 import java.time.LocalTime;
 import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Embeddable
 @Data
-@AllArgsConstructor
+@Builder
 public class HappyHour {
 
   private LocalTime begin;

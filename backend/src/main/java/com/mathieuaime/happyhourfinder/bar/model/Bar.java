@@ -1,9 +1,5 @@
 package com.mathieuaime.happyhourfinder.bar.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mathieuaime.happyhourfinder.bar.mapper.JsonToPointDeserializer;
-import com.mathieuaime.happyhourfinder.bar.mapper.PointToJsonSerializer;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -31,8 +27,6 @@ public class Bar {
   private String name;
 
   @Column(columnDefinition = "POINT")
-  @JsonSerialize(using = PointToJsonSerializer.class)
-  @JsonDeserialize(using = JsonToPointDeserializer.class)
   private Point coordinates;
 
   @Embedded
