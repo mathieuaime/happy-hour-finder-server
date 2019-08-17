@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/1.0/bars/1' -i -X DELETE
+----

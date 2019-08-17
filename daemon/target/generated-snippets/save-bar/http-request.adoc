@@ -1,0 +1,13 @@
+[source,http,options="nowrap"]
+----
+POST /api/1.0/bars/ HTTP/1.1
+Content-Type: application/json
+Host: localhost:8080
+Content-Length: 74
+
+{
+  "id" : 1,
+  "name" : "Bar1",
+  "coordinates" : "POINT (1.0 2.0)"
+}
+----

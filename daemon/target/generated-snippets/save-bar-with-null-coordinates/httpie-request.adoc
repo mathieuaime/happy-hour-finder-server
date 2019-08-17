@@ -1,0 +1,9 @@
+[source,bash]
+----
+$ echo '{
+  "id" : 3,
+  "name" : "Bar3",
+  "coordinates" : null
+}' | http POST 'http://localhost:8080/api/1.0/bars/' \
+    'Content-Type:application/json'
+----
