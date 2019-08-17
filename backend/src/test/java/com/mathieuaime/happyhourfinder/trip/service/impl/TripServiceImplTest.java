@@ -1,6 +1,8 @@
 package com.mathieuaime.happyhourfinder.trip.service.impl;
 
 import static com.mathieuaime.happyhourfinder.bar.comparator.BarComparator.minutesUntil;
+import static com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest.byCount;
+import static com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest.byCountAndMandatoryBars;
 import static com.mathieuaime.happyhourfinder.trip.service.impl.TestData.Bars.BAR_1;
 import static com.mathieuaime.happyhourfinder.trip.service.impl.TestData.Bars.BAR_2;
 import static com.mathieuaime.happyhourfinder.trip.service.impl.TestData.Bars.BAR_3;
@@ -17,7 +19,6 @@ import com.mathieuaime.happyhourfinder.bar.model.HappyHour;
 import com.mathieuaime.happyhourfinder.trip.model.Trip;
 import com.mathieuaime.happyhourfinder.trip.service.TripService;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.LongStream;
@@ -50,26 +51,27 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithNegativeNumberOfBar() {
-    Optional<Trip> trip = mockTripService.generate(-1, Collections.emptyList());
+    Optional<Trip> trip = mockTripService.generate(byCount(-1));
     assertThat(trip).isNotPresent();
   }
 
   @Test
   public void generateATripWithNullBars() {
-    Optional<Trip> trip = mockTripService.generate(0, null);
+    Optional<Trip> trip = mockTripService.generate(byCountAndMandatoryBars(-1, null));
     assertThat(trip).isNotPresent();
   }
 
   @Test
   public void generateATripWithZeroBar() {
-    Optional<Trip> trip = mockTripService.generate(0, Collections.emptyList());
+    Optional<Trip> trip = mockTripService.generate(byCount(0));
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).isEmpty();
   }
 
   @Test
   public void generateATripWithUnknownBar() {
-    Optional<Trip> trip = mockTripService.generate(1, ImmutableList.of(8L));
+    Optional<Trip> trip = mockTripService
+        .generate(byCountAndMandatoryBars(1, ImmutableList.of(8L)));
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).hasSize(1);
     assertThat(trip.get().getBars().get(0).getId()).isNotEqualTo(8L);
@@ -77,7 +79,7 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithOneBar() {
-    Optional<Trip> trip = mockTripService.generate(1, Collections.emptyList());
+    Optional<Trip> trip = mockTripService.generate(byCount(1));
 
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).hasSize(1);
@@ -86,7 +88,7 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithTenBars() {
-    Optional<Trip> trip = mockTripService.generate(10, Collections.emptyList());
+    Optional<Trip> trip = mockTripService.generate(byCount(10));
 
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).hasSize(6);
@@ -95,13 +97,15 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithNotEnoughBars() {
-    Optional<Trip> trip = mockTripService.generate(1, ImmutableList.of(1L, 2L));
+    Optional<Trip> trip = mockTripService
+        .generate(byCountAndMandatoryBars(1, ImmutableList.of(1L, 2L)));
     assertThat(trip).isNotPresent();
   }
 
   @Test
   public void generateATripWithOnlyMandatoryBars() {
-    Optional<Trip> trip = mockTripService.generate(2, ImmutableList.of(1L, 2L));
+    Optional<Trip> trip = mockTripService
+        .generate(byCountAndMandatoryBars(2, ImmutableList.of(1L, 2L)));
 
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).hasSize(2);
@@ -110,7 +114,8 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithMandatoryBars() {
-    Optional<Trip> trip = mockTripService.generate(3, ImmutableList.of(1L, 2L));
+    Optional<Trip> trip = mockTripService
+        .generate(byCountAndMandatoryBars(3, ImmutableList.of(1L, 2L)));
 
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).hasSize(3);
@@ -119,19 +124,21 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithHappyHourNegativeNumberOfBar() {
-    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(-1, Collections.emptyList());
+    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(byCount(-1));
     assertThat(trip).isNotPresent();
   }
 
   @Test
   public void generateATripWithHappyHourWithNullBars() {
-    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(0, null);
+    Optional<Trip> trip = mockTripService
+        .generateAndSortedByHappyHour(byCountAndMandatoryBars(0, null));
     assertThat(trip).isNotPresent();
   }
 
   @Test
   public void generateATripWithHappyHourWithBarWithoutHappyHour() {
-    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(1, ImmutableList.of(7L));
+    Optional<Trip> trip = mockTripService
+        .generateAndSortedByHappyHour(byCountAndMandatoryBars(1, ImmutableList.of(7L)));
     assertThat(trip).isPresent();
     assertThat(trip.get().getBars()).hasSize(1);
     assertThat(trip.get().getBars()).doesNotContain(BAR_7);
@@ -139,7 +146,7 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithConsecutiveHappyHours() {
-    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(3, Collections.emptyList());
+    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(byCount(3));
 
     assertThat(trip).isPresent();
     List<Bar> bars = trip.get().getBars();
@@ -157,7 +164,8 @@ public class TripServiceImplTest {
 
   @Test
   public void generateATripWithConsecutiveHappyHoursAndMandatoryBars() {
-    Optional<Trip> trip = mockTripService.generateAndSortedByHappyHour(5, ImmutableList.of(1L));
+    Optional<Trip> trip = mockTripService
+        .generateAndSortedByHappyHour(byCountAndMandatoryBars(5, ImmutableList.of(1L)));
 
     assertThat(trip).isPresent();
     List<Bar> bars = trip.get().getBars();

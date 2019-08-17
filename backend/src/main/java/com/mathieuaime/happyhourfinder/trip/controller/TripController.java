@@ -5,6 +5,7 @@ import com.mathieuaime.happyhourfinder.common.constants.Paths.Trip;
 import com.mathieuaime.happyhourfinder.trip.dto.TripDto;
 import com.mathieuaime.happyhourfinder.trip.exception.TripGenerationExecption;
 import com.mathieuaime.happyhourfinder.trip.mapper.TripMapper;
+import com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest;
 import com.mathieuaime.happyhourfinder.trip.service.TripService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,9 @@ public class TripController {
       @RequestParam(value = "count", required = false, defaultValue = "1") int count,
       @RequestParam(value = "bars", required = false, defaultValue = "") List<Long> barIds) {
 
-    return tripService.generate(count, barIds)
-        .map(tripMapper::convertToDto)
-        .orElseThrow(TripGenerationExecption::new);
+    GenerateTripRequest request = GenerateTripRequest.byCountAndMandatoryBars(count, barIds);
+    return tripService.generate(request)
+        .map(tripMapper::convertToDto).orElseThrow(TripGenerationExecption::new);
   }
 
   @GetMapping(Trip.HAPPY_HOUR)
@@ -47,8 +48,8 @@ public class TripController {
       @RequestParam(value = "count", required = false, defaultValue = "1") int count,
       @RequestParam(value = "bars", required = false, defaultValue = "") List<Long> barIds) {
 
-    return tripService.generateAndSortedByHappyHour(count, barIds)
-        .map(tripMapper::convertToDto)
-        .orElseThrow(TripGenerationExecption::new);
+    GenerateTripRequest request = GenerateTripRequest.byCountAndMandatoryBars(count, barIds);
+    return tripService.generateAndSortedByHappyHour(request)
+        .map(tripMapper::convertToDto).orElseThrow(TripGenerationExecption::new);
   }
 }

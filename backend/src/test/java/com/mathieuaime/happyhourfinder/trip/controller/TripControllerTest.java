@@ -4,9 +4,10 @@ import static com.mathieuaime.happyhourfinder.common.constants.Paths.STATUS;
 import static com.mathieuaime.happyhourfinder.common.constants.Paths.Trip.HAPPY_HOUR;
 import static com.mathieuaime.happyhourfinder.common.constants.Paths.Trip.TRIPS;
 import static com.mathieuaime.happyhourfinder.common.constants.Paths.VERSION;
+import static com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest.byCount;
+import static com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest.byCountAndMandatoryBars;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -23,6 +24,7 @@ import com.mathieuaime.happyhourfinder.bar.model.HappyHour;
 import com.mathieuaime.happyhourfinder.trip.dto.TripDto;
 import com.mathieuaime.happyhourfinder.trip.mapper.TripMapper;
 import com.mathieuaime.happyhourfinder.trip.model.Trip;
+import com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest;
 import com.mathieuaime.happyhourfinder.trip.service.TripService;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -101,13 +103,6 @@ public class TripControllerTest {
   public void setUp() throws Exception {
     Mockito.when(tripMapper.convertToDto(TRIP_1)).thenReturn(TRIP_DTO_1);
     Mockito.when(tripMapper.convertToDto(TRIP_2)).thenReturn(TRIP_DTO_2);
-
-    when(tripService.generate(Mockito.eq(1), Mockito.anyList())).thenReturn(Optional.of(TRIP_1));
-    when(tripService.generateAndSortedByHappyHour(Mockito.eq(1), Mockito.anyList()))
-        .thenReturn(Optional.of(TRIP_1));
-    when(tripService.generate(Mockito.eq(2), Mockito.anyList())).thenReturn(Optional.of(TRIP_2));
-    when(tripService.generateAndSortedByHappyHour(Mockito.eq(2), Mockito.anyList()))
-        .thenReturn(Optional.of(TRIP_2));
   }
 
   @After
@@ -125,18 +120,21 @@ public class TripControllerTest {
 
   @Test
   public void generateTripWithBadValue() throws Exception {
-    when(tripService.generate(-1, Collections.emptyList())).thenReturn(Optional.empty());
+    when(tripService.generate(byCount(-1))).thenReturn(Optional.empty());
 
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "-1"))
         .andExpect(status().is5xxServerError());
 
-    verify(tripService, times(1)).generate(-1, Collections.emptyList());
+    verify(tripService).generate(byCount(-1));
   }
 
   @Test
   public void generateTripWithDefaultValue() throws Exception {
+    GenerateTripRequest request = byCount(1);
+    when(tripService.generate(request)).thenReturn(Optional.of(TRIP_1));
+
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isOk())
@@ -147,22 +145,28 @@ public class TripControllerTest {
         .andExpect(jsonPath("$.bars[0].happyHour.begin", is("16:00")))
         .andExpect(jsonPath("$.bars[0].happyHour.duration", is("PT1H")));
 
-    verify(tripService, times(1)).generate(1, Collections.emptyList());
+    verify(tripService).generate(request);
   }
 
   @Test
   public void generateTripWithCount() throws Exception {
+    GenerateTripRequest request = byCount(2);
+    when(tripService.generate(request)).thenReturn(Optional.of(TRIP_2));
+
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "2"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(2)));
 
-    verify(tripService, times(1)).generate(2, Collections.emptyList());
+    verify(tripService).generate(request);
   }
 
   @Test
   public void generateTripWithMandatoryBar() throws Exception {
+    GenerateTripRequest request = byCountAndMandatoryBars(2, ImmutableList.of(2L));
+    when(tripService.generate(request)).thenReturn(Optional.of(TRIP_2));
+
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "2")
@@ -170,24 +174,27 @@ public class TripControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(2)));
 
-    verify(tripService, times(1)).generate(2, ImmutableList.of(2L));
+    verify(tripService).generate(request);
   }
 
   @Test
   public void generateTripSortedByHappyHourWithBadValue() throws Exception {
-    when(tripService.generateAndSortedByHappyHour(-1, Collections.emptyList()))
-        .thenReturn(Optional.empty());
+    GenerateTripRequest request = byCount(-1);
+    when(tripService.generateAndSortedByHappyHour(request)).thenReturn(Optional.empty());
 
     mockMvc.perform(get(VERSION + TRIPS + HAPPY_HOUR)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "-1"))
         .andExpect(status().is5xxServerError());
 
-    verify(tripService, times(1)).generateAndSortedByHappyHour(-1, Collections.emptyList());
+    verify(tripService).generateAndSortedByHappyHour(request);
   }
 
   @Test
   public void generateTripSortedByHappyHourWithDefaultValue() throws Exception {
+    GenerateTripRequest request = byCount(1);
+    when(tripService.generateAndSortedByHappyHour(request)).thenReturn(Optional.of(TRIP_1));
+
     mockMvc.perform(get(VERSION + TRIPS + HAPPY_HOUR)
         .contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isOk())
@@ -198,22 +205,28 @@ public class TripControllerTest {
         .andExpect(jsonPath("$.bars[0].happyHour.begin", is("16:00")))
         .andExpect(jsonPath("$.bars[0].happyHour.duration", is("PT1H")));
 
-    verify(tripService, times(1)).generateAndSortedByHappyHour(1, Collections.emptyList());
+    verify(tripService).generateAndSortedByHappyHour(request);
   }
 
   @Test
   public void generateTripSortedByHappyHourWithCount() throws Exception {
+    GenerateTripRequest request = byCount(2);
+    when(tripService.generateAndSortedByHappyHour(request)).thenReturn(Optional.of(TRIP_2));
+
     mockMvc.perform(get(VERSION + TRIPS + HAPPY_HOUR)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "2"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(2)));
 
-    verify(tripService, times(1)).generateAndSortedByHappyHour(2, Collections.emptyList());
+    verify(tripService).generateAndSortedByHappyHour(request);
   }
 
   @Test
   public void generateTripSortedByHappyHourWithMandatoryBar() throws Exception {
+    GenerateTripRequest request = byCountAndMandatoryBars(2, ImmutableList.of(2L));
+    when(tripService.generateAndSortedByHappyHour(request)).thenReturn(Optional.of(TRIP_2));
+
     mockMvc.perform(get(VERSION + TRIPS + HAPPY_HOUR)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "2")
@@ -221,6 +234,6 @@ public class TripControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(2)));
 
-    verify(tripService, times(1)).generateAndSortedByHappyHour(2, ImmutableList.of(2L));
+    verify(tripService).generateAndSortedByHappyHour(request);
   }
 }

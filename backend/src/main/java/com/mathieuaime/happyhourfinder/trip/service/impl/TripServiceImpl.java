@@ -5,6 +5,7 @@ import com.mathieuaime.happyhourfinder.bar.comparator.BarComparator;
 import com.mathieuaime.happyhourfinder.bar.dao.BarDao;
 import com.mathieuaime.happyhourfinder.bar.model.Bar;
 import com.mathieuaime.happyhourfinder.trip.model.Trip;
+import com.mathieuaime.happyhourfinder.trip.service.GenerateTripRequest;
 import com.mathieuaime.happyhourfinder.trip.service.TripService;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -27,7 +28,10 @@ public class TripServiceImpl implements TripService {
   }
 
   @Override
-  public Optional<Trip> generate(int nbBars, List<Long> mandatoryBars) {
+  public Optional<Trip> generate(GenerateTripRequest request) {
+    int nbBars = request.getCount();
+    List<Long> mandatoryBars = request.getMandatoryBars();
+
     if (mandatoryBars == null || nbBars < mandatoryBars.size()) {
       return Optional.empty();
     }
@@ -43,7 +47,10 @@ public class TripServiceImpl implements TripService {
   }
 
   @Override
-  public Optional<Trip> generateAndSortedByHappyHour(int nbBars, List<Long> mandatoryBars) {
+  public Optional<Trip> generateAndSortedByHappyHour(GenerateTripRequest request) {
+    int nbBars = request.getCount();
+    List<Long> mandatoryBars = request.getMandatoryBars();
+
     if (mandatoryBars == null || nbBars < mandatoryBars.size()) {
       return Optional.empty();
     }
