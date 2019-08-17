@@ -19,7 +19,7 @@
         <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
         <checkstyle.version>8.11</checkstyle.version>
         <maven-checkstyle-plugin.configLocation>google_checks.xml</maven-checkstyle-plugin.configLocation>
-        <hibernate.version>5.4.0.Final</hibernate.version>
+        <hibernate.version>5.4.4.Final</hibernate.version>
     </properties>
 
     <dependencies>
