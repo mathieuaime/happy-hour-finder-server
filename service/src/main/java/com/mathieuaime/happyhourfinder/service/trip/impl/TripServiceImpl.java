@@ -44,7 +44,7 @@ public class TripServiceImpl implements TripService {
 
     bars.sort(BarComparator.compareByHappyHour(LocalTime.now()));
 
-    return Trip.builder().bars(bars).build();
+    return Trip.create(bars);
   }
 
   private List<Bar> addBarsFromDb(GenerateTripRequest request) {

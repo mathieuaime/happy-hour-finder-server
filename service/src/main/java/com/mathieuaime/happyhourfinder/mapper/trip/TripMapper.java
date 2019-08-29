@@ -22,6 +22,6 @@ public class TripMapper {
 
   public TripDto convertToDto(Trip trip) {
     Type listType = new TypeToken<List<BarDto>>() {}.getType();
-    return TripDto.builder().bars(modelMapper.map(trip.getBars(), listType)).build();
+    return TripDto.create(modelMapper.map(trip.getBars(), listType));
   }
 }

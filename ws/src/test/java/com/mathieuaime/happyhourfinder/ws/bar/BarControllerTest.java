@@ -281,11 +281,9 @@ public class BarControllerTest {
   private static final Point POINT_1 = geometryFactory.createPoint(new Coordinate(1, 2));
   private static final Point POINT_2 = geometryFactory.createPoint(new Coordinate(2, 3));
 
-  private static final HappyHourDto HAPPY_HOUR_DTO =
-      HappyHourDto.builder().begin("16:00").duration("PT1H").build();
+  private static final HappyHourDto HAPPY_HOUR_DTO = HappyHourDto.create("16:00", "PT1H");
 
-  private static final BarDto BAR_DTO_1 =
-      BarDto.builder().id(1L).name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR_DTO).build();
+  private static final BarDto BAR_DTO_1 = BarDto.create(1L, "Bar1", POINT_1, HAPPY_HOUR_DTO);
   private static final BarDto BAR_DTO_2 =
       BarDto.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
   private static final BarDto BAR_DTO_3 = BarDto.builder().id(3L).name("Bar3").build();

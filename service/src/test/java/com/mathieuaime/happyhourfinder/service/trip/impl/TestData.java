@@ -20,17 +20,11 @@ interface TestData {
 
   interface HappyHours {
 
-    HappyHour HAPPY_HOUR_1 =
-        HappyHour.builder().begin(LocalTime.of(12, 0)).duration(Duration.ofHours(1)).build();
-    HappyHour HAPPY_HOUR_2 =
-        HappyHour.builder().begin(LocalTime.of(14, 0)).duration(Duration.ofHours(1)).build();
-    HappyHour HAPPY_HOUR_3 =
-        HappyHour.builder().begin(LocalTime.of(15, 0)).duration(Duration.ofHours(2)).build();
-    HappyHour HAPPY_HOUR_4 =
-        HappyHour.builder().begin(LocalTime.of(15, 30)).duration(Duration.ofHours(1)).build();
-    HappyHour HAPPY_HOUR_5 =
-        HappyHour.builder().begin(LocalTime.of(23, 0)).duration(Duration.ofHours(3)).build();
-    HappyHour HAPPY_HOUR_6 =
-        HappyHour.builder().begin(LocalTime.of(1, 0)).duration(Duration.ofHours(1)).build();
+    HappyHour HAPPY_HOUR_1 = HappyHour.create(LocalTime.of(12, 0), Duration.ofHours(1));
+    HappyHour HAPPY_HOUR_2 = HappyHour.create(LocalTime.of(14, 0), Duration.ofHours(1));
+    HappyHour HAPPY_HOUR_3 = HappyHour.create(LocalTime.of(15, 0), Duration.ofHours(2));
+    HappyHour HAPPY_HOUR_4 = HappyHour.create(LocalTime.of(15, 30), Duration.ofHours(1));
+    HappyHour HAPPY_HOUR_5 = HappyHour.create(LocalTime.of(23, 0), Duration.ofHours(3));
+    HappyHour HAPPY_HOUR_6 = HappyHour.create(LocalTime.of(1, 0), Duration.ofHours(1));
   }
 }

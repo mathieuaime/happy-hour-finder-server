@@ -19,7 +19,7 @@ public class TripMapperTest {
     Bar bar = Bar.builder().id(1L).name("Bar1").build();
     BarDto barDto = BarDto.builder().id(1L).name("Bar1").build();
 
-    Trip trip = Trip.builder().bars(Collections.singletonList(bar)).build();
+    Trip trip = Trip.create(Collections.singletonList(bar));
 
     TripDto tripDto = TRIP_MAPPER.convertToDto(trip);
 

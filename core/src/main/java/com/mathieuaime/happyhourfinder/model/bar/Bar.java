@@ -8,8 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.locationtech.jts.geom.Point;
 
@@ -17,6 +19,8 @@ import org.locationtech.jts.geom.Point;
 @Table(name = "bars")
 @Data
 @Builder
+@AllArgsConstructor(staticName = "create")
+@NoArgsConstructor
 public class Bar {
 
   @Id

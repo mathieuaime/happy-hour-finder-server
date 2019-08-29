@@ -2,16 +2,16 @@ package com.mathieuaime.happyhourfinder.api.trip;
 
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor(staticName = "create")
+@NoArgsConstructor
 public class TripDto {
 
-  private final List<BarDto> bars;
-
-  public List<BarDto> getBars() {
-    return bars;
-  }
+  private List<BarDto> bars;
 }
