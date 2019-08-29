@@ -46,7 +46,7 @@
 
     <guava.version>21.0</guava.version>
     <hibernate.version>5.4.0.Final</hibernate.version>
-    <jackson-databind.version>2.8.8</jackson-databind.version>
+    <jackson-databind.version>2.9.4</jackson-databind.version>
     <javax.persistence-api.version>RELEASE</javax.persistence-api.version>
     <jts-core.version>RELEASE</jts-core.version>
     <modelmapper.version>RELEASE</modelmapper.version>

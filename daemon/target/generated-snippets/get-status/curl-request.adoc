@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ curl 'http://localhost:8080/api/1.0/bars/status/check' -i -X GET \
-    -H 'Content-Type: text/plain'
-----

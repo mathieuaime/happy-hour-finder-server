@@ -222,6 +222,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -241,6 +242,7 @@ import com.mathieuaime.happyhourfinder.mapper.bar.BarMapper;
 import com.mathieuaime.happyhourfinder.model.bar.Bar;
 import com.mathieuaime.happyhourfinder.model.bar.HappyHour;
 import com.mathieuaime.happyhourfinder.service.bar.BarService;
+import com.mathieuaime.happyhourfinder.ws.bar.BarControllerTest.Config;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -256,6 +258,9 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -265,7 +270,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BarController.class)
+@Import(Config.class)
 public class BarControllerTest {
+
+  @Configuration
+  static class Config {
+
+    @Bean
+    public BarService barService() {
+      return mock(BarService.class);
+    }
+  }
+
 
   @Autowired
   private MockMvc mockMvc;
