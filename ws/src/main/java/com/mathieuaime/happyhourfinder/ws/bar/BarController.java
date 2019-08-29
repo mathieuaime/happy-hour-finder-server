@@ -2,11 +2,8 @@ package com.mathieuaime.happyhourfinder.ws.bar;
 
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
 import com.mathieuaime.happyhourfinder.api.trip.TripDto;
-import com.mathieuaime.happyhourfinder.mapper.bar.BarMapper;
-import com.mathieuaime.happyhourfinder.mapper.trip.TripMapper;
-import com.mathieuaime.happyhourfinder.model.bar.Bar;
-import com.mathieuaime.happyhourfinder.service.bar.BarService;
-import com.mathieuaime.happyhourfinder.service.trip.TripService;
+import com.mathieuaime.happyhourfinder.service.bar.BarFacade;
+import com.mathieuaime.happyhourfinder.service.trip.TripFacade;
 import com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest;
 import com.mathieuaime.happyhourfinder.ws.bar.exception.BarNotFoundException;
 import com.mathieuaime.happyhourfinder.ws.common.constant.Paths;
@@ -30,18 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:4200")
 public class BarController {
 
-  private final BarService barService;
-  private final TripService tripService;
-  private final BarMapper barMapper;
-  private final TripMapper tripMapper;
+  private final BarFacade barFacade;
+  private final TripFacade tripFacade;
 
   @Autowired
-  public BarController(BarService barService, BarMapper barMapper, TripService tripService,
-      TripMapper tripMapper) {
-    this.barService = barService;
-    this.tripService = tripService;
-    this.barMapper = barMapper;
-    this.tripMapper = tripMapper;
+  public BarController(BarFacade barFacade, TripFacade tripFacade) {
+    this.barFacade = barFacade;
+    this.tripFacade = tripFacade;
   }
 
   @GetMapping(Paths.STATUS)
@@ -51,33 +43,30 @@ public class BarController {
 
   @GetMapping
   public Page<BarDto> getBars(Pageable pageable) {
-    return barService.findAll(pageable).map(barMapper::convertToDto);
+    return barFacade.findAll(pageable);
   }
 
   @GetMapping("/{id}")
   public BarDto getBar(@PathVariable Long id) {
-    return barService.findById(id)
-        .map(barMapper::convertToDto)
+    return barFacade.findById(id)
         .orElseThrow(BarNotFoundException::new);
   }
 
   @PostMapping
   public BarDto saveBar(@RequestBody BarDto barDto) {
-    Bar bar = barService.save(barMapper.convertToEntity(barDto));
-    return barMapper.convertToDto(bar);
+    return barFacade.save(barDto);
   }
 
   @DeleteMapping("/{id}")
   public void deleteBar(@PathVariable Long id) {
-    barService.deleteById(id);
+    barFacade.deleteById(id);
   }
 
   @GetMapping(value = Paths.Bar.TRIPS, consumes = MediaType.APPLICATION_JSON_VALUE)
   public TripDto generateTrip(
       @RequestParam(value = "count", required = false, defaultValue = "1") int count,
       @RequestParam(value = "bars", required = false, defaultValue = "") List<Long> barIds) {
-
     GenerateTripRequest request = GenerateTripRequest.byCountAndMandatoryBars(count, barIds);
-    return tripMapper.convertToDto(tripService.generate(request));
+    return tripFacade.generate(request);
   }
 }
