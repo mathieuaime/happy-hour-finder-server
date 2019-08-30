@@ -15,7 +15,7 @@ executors:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: happyhourfinder
   executor-buildpack:
-    working_directory: /tmp/happy-hour-finder-server/backend
+    working_directory: /tmp/happy-hour-finder-server/
     docker:
       - image: buildpack-deps:stretch
 
@@ -45,7 +45,7 @@ jobs:
           command: mvn package -DskipTests
       - run:
           name: Build Docker Image
-          command: docker build --build-arg JAR_FILE=daemon/target/happy-hour-finder-daemon-$VERSION.jar -t $IMAGE_NAME:$VERSION .
+          command: cd daemon && docker build -t $IMAGE_NAME:$VERSION .
       - run:
           name: Push Docker Image
           command: |
