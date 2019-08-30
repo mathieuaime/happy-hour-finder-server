@@ -10,8 +10,11 @@ public final class Paths {
 
   @UtilityClass
   public static final class Bar {
-
     public static final String BARS = "bars/";
+  }
+
+  @UtilityClass
+  public static final class Trip {
     public static final String TRIPS = "trips/";
   }
 }

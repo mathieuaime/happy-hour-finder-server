@@ -222,7 +222,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -238,7 +237,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
 import com.mathieuaime.happyhourfinder.api.bar.HappyHourDto;
 import com.mathieuaime.happyhourfinder.service.bar.BarFacade;
-import com.mathieuaime.happyhourfinder.service.trip.TripFacade;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.After;
@@ -261,7 +259,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BarController.class)
-@ContextConfiguration(classes = MockConfig.class)
+@ContextConfiguration(classes = Config.class)
 public class BarControllerTest {
 
   @Autowired
@@ -269,9 +267,6 @@ public class BarControllerTest {
 
   @MockBean
   private BarFacade barFacade;
-
-  @MockBean
-  private TripFacade tripFacade;
 
   private static final GeometryFactory geometryFactory =
       new GeometryFactory(new PrecisionModel(), 26910);
@@ -336,7 +331,7 @@ public class BarControllerTest {
         .andExpect(jsonPath("$.happyHour.begin", is("16:00")))
         .andExpect(jsonPath("$.happyHour.duration", is("PT1H")));
 
-    verify(barFacade, times(1)).findById(barId);
+    verify(barFacade).findById(barId);
   }
 
   @Test
@@ -347,12 +342,11 @@ public class BarControllerTest {
         .contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
 
-    verify(barFacade, times(1)).findById(barId);
+    verify(barFacade).findById(barId);
   }
 
   @Test
   public void saveBar() throws Exception {
-
     when(barFacade.save(any(BarDto.class))).then(invocationOnMock -> BAR_DTO_1);
 
     mockMvc.perform(post(VERSION + BARS)
@@ -363,8 +357,7 @@ public class BarControllerTest {
         .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")));
 
-    verify(barFacade, times(1)).save(any(BarDto.class));
-    verifyNoMoreInteractions(barFacade);
+    verify(barFacade).save(any(BarDto.class));
   }
 
   @Test
@@ -379,7 +372,7 @@ public class BarControllerTest {
         .andExpect(jsonPath("$.name", is("Bar3")))
         .andExpect(jsonPath("$.coordinates", nullValue()));
 
-    verify(barFacade, times(1)).save(any(BarDto.class));
+    verify(barFacade).save(any(BarDto.class));
   }
 
   @Test
@@ -391,7 +384,7 @@ public class BarControllerTest {
     mockMvc.perform(delete(VERSION + BARS + "{id}", barId))
         .andExpect(status().isOk());
 
-    verify(barFacade, times(1)).deleteById(barId);
+    verify(barFacade).deleteById(barId);
   }
 >>>>>>> #11 re architecture:ws/src/test/java/com/mathieuaime/happyhourfinder/ws/bar/BarControllerTest.java
 }

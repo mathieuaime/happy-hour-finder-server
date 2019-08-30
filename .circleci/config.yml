@@ -18,8 +18,8 @@ executors:
     working_directory: /tmp/happy-hour-finder-server/backend
     docker:
       - image: buildpack-deps:stretch
-jobs:
 
+jobs:
   integration_tests_back:
     executor: executor-java
     steps:
@@ -58,7 +58,6 @@ jobs:
       - run:
           name: Deploying Back
           command: echo "Deploy !"
-
 
 workflows:
   version: 2
