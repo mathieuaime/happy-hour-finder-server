@@ -8,8 +8,8 @@ import static com.mathieuaime.happyhourfinder.service.trip.impl.TestData.Bars.BA
 import static com.mathieuaime.happyhourfinder.service.trip.impl.TestData.Bars.BAR_5;
 import static com.mathieuaime.happyhourfinder.service.trip.impl.TestData.Bars.BAR_6;
 import static com.mathieuaime.happyhourfinder.service.trip.impl.TestData.Bars.BAR_7;
-import static com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest.byCount;
-import static com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest.byCountAndMandatoryBars;
+import static com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest.byCount;
+import static com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest.byCountAndMandatoryBars;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableList;

@@ -1,7 +1,7 @@
 package com.mathieuaime.happyhourfinder.ws.bar;
 
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
-import com.mathieuaime.happyhourfinder.service.bar.BarFacade;
+import com.mathieuaime.happyhourfinder.facade.bar.BarFacade;
 import com.mathieuaime.happyhourfinder.ws.bar.exception.BarNotFoundException;
 import com.mathieuaime.happyhourfinder.ws.common.constant.Paths;
 import org.springframework.beans.factory.annotation.Autowired;

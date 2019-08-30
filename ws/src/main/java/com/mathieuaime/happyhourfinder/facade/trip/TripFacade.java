@@ -1,12 +1,12 @@
-package com.mathieuaime.happyhourfinder.service.trip;
+package com.mathieuaime.happyhourfinder.facade.trip;
 
-import com.mathieuaime.happyhourfinder.model.trip.Trip;
+import com.mathieuaime.happyhourfinder.api.trip.TripDto;
 import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
 
 /**
  * The Trip service interface.
  */
-public interface TripService {
+public interface TripFacade {
 
   /**
    * Generates a random trip sorted by happy hour.
@@ -14,5 +14,5 @@ public interface TripService {
    * @param request the generation request
    * @return an optional of the generated trip
    */
-  Trip generate(GenerateTripRequest request);
+  TripDto generate(GenerateTripRequest request);
 }

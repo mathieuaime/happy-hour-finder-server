@@ -13,11 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
 import com.mathieuaime.happyhourfinder.api.trip.TripDto;
-import com.mathieuaime.happyhourfinder.service.trip.TripFacade;
-import com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest;
+import com.mathieuaime.happyhourfinder.facade.trip.TripFacade;
+import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
+import com.mathieuaime.happyhourfinder.type.IntegrationTest;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @RunWith(SpringRunner.class)
 @WebMvcTest(TripController.class)
 @ContextConfiguration(classes = Config.class)
+@Category(IntegrationTest.class)
 public class TripControllerTest {
 
   @Autowired

@@ -3,7 +3,7 @@ package com.mathieuaime.happyhourfinder.facade.bar.impl;
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
 import com.mathieuaime.happyhourfinder.mapper.bar.BarMapper;
 import com.mathieuaime.happyhourfinder.model.bar.Bar;
-import com.mathieuaime.happyhourfinder.service.bar.BarFacade;
+import com.mathieuaime.happyhourfinder.facade.bar.BarFacade;
 import com.mathieuaime.happyhourfinder.service.bar.BarService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;

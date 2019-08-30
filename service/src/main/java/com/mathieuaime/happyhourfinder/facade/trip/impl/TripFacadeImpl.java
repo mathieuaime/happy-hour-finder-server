@@ -2,9 +2,9 @@ package com.mathieuaime.happyhourfinder.facade.trip.impl;
 
 import com.mathieuaime.happyhourfinder.api.trip.TripDto;
 import com.mathieuaime.happyhourfinder.mapper.trip.TripMapper;
-import com.mathieuaime.happyhourfinder.service.trip.TripFacade;
+import com.mathieuaime.happyhourfinder.facade.trip.TripFacade;
 import com.mathieuaime.happyhourfinder.service.trip.TripService;
-import com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest;
+import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

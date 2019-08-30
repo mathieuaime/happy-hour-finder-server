@@ -6,7 +6,7 @@ import com.mathieuaime.happyhourfinder.model.bar.Bar;
 import com.mathieuaime.happyhourfinder.model.trip.Trip;
 import com.mathieuaime.happyhourfinder.repository.bar.BarDao;
 import com.mathieuaime.happyhourfinder.service.trip.TripService;
-import com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest;
+import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;

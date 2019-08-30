@@ -11,6 +11,7 @@
     <module>api</module>
     <module>core</module>
     <module>daemon</module>
+    <module>model</module>
     <module>service</module>
     <module>ws</module>
   </modules>
@@ -53,6 +54,15 @@
     <modelmapper-spring.version>2.1.0</modelmapper-spring.version>
     <mysql-connector-java.version>8.0.17</mysql-connector-java.version>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>unit-tests</id>
+      <properties>
+        <exclude.groups>com.mathieuaime.happyhourfinder.type.IntegrationTest</exclude.groups>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -155,6 +165,11 @@
       <dependency>
         <groupId>com.mathieuaime</groupId>
         <artifactId>happy-hour-finder-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mathieuaime</groupId>
+        <artifactId>happy-hour-finder-model</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

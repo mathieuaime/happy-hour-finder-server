@@ -1,8 +1,8 @@
 package com.mathieuaime.happyhourfinder.ws.trip;
 
 import com.mathieuaime.happyhourfinder.api.trip.TripDto;
-import com.mathieuaime.happyhourfinder.service.trip.TripFacade;
-import com.mathieuaime.happyhourfinder.service.trip.request.GenerateTripRequest;
+import com.mathieuaime.happyhourfinder.facade.trip.TripFacade;
+import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
 import com.mathieuaime.happyhourfinder.ws.common.constant.Paths;
 import com.mathieuaime.happyhourfinder.ws.common.constant.Paths.Trip;
 import java.util.List;
