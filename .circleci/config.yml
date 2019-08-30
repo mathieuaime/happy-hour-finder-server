@@ -2,163 +2,68 @@ version: 2.1
 
 executors:
   executor-java:
-    working_directory: /tmp/happy-hour-finder-server/backend
+    working_directory: /tmp/happy-hour-finder-server/
     docker:
       - image: circleci/openjdk:8-jdk
         environment:
           VERSION: 1.2.0-SNAPSHOT
-          IMAGE_NAME: mathieuaime/happyhourfinder-backend
-          MAVEN_OPTS: -Xmx3200m
-  executor-int:
-    working_directory: /tmp/happy-hour-finder-server/backend
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
+          IMAGE_NAME: mathieuaime/happyhourfinder-server
           MAVEN_OPTS: -Xmx3200m
       - image: circleci/mysql
         environment:
           MYSQL_USER: root
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: happyhourfinder
-  executor-node:
-    working_directory: /tmp/happy-hour-finder-server/frontend
-    docker:
-      - image: circleci/node:10.7.0-browsers
-    environment:
-      VERSION: 1.2.0-SNAPSHOT
-      IMAGE_NAME: mathieuaime/happyhourfinder-frontend
   executor-buildpack:
     working_directory: /tmp/happy-hour-finder-server/backend
     docker:
       - image: buildpack-deps:stretch
 
 jobs:
-  unit_tests_back:
+  integration_tests_back:
     executor: executor-java
     steps:
       - checkout:
           path: /tmp/happy-hour-finder-server
       - run:
-          name: Show current branch
-          command: echo ${CIRCLE_BRANCH}
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "pom.xml" }}
-            - v1-dependencies-
-      - run:
-          name: Unit tests
-          command: mvn test -P unit-tests
-      - save_cache:
-          key: v1-dependencies-{{ checksum "pom.xml" }}
-          paths:
-            - ~/.m2
-
-  integration_tests_back:
-    executor: executor-int
-    steps:
-      - checkout:
-          path: /tmp/happy-hour-finder-server
-      - restore_cache:
-                keys:
-                  - v1-dependencies-{{ checksum "pom.xml" }}
-                  - v1-dependencies-
-      - run:
           name: Integration tests
           command: mvn integration-test
       - run:
-          name: Generate Code Coverage Report
-          command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
-      - run:
           name: Run Code Quality Analysis
           command: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${CIRCLE_BRANCH}
-      - store_artifacts:
-          path: target/happy-hour-finder-backend-1.2.0-SNAPSHOT.jar
       - store_test_results:
           path: target/surefire-reports
-      - save_cache:
-          key: v1-dependencies-{{ checksum "pom.xml" }}
-          paths:
-            - ~/.m2
 
   publish_back:
     executor: executor-java
     steps:
       - checkout:
           path: /tmp/happy-hour-finder-server
-      - restore_cache:
-                keys:
-                  - v1-dependencies-{{ checksum "pom.xml" }}
-                  - v1-dependencies-
       - setup_remote_docker
       - run:
           name: Packaging
           command: mvn package -DskipTests
       - run:
           name: Build Docker Image
-          command: docker build -t $IMAGE_NAME:$VERSION .
+          command: docker build --build-arg JAR_FILE=daemon/target/happy-hour-finder-daemon-$VERSION.jar -t $IMAGE_NAME:$VERSION .
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:$VERSION
-            docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
-            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
 
-  build_front:
-    executor: executor-node
+  deploy_back:
+    executor: executor-buildpack
     steps:
-      - checkout:
-          path: /tmp/happy-hour-finder-server
       - run:
-          name: Show current branch
-          command: echo ${CIRCLE_BRANCH}
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
-      - run:
-          name: Install local dependencies
-          command: npm install
-      - save_cache:
-          key: v1-dependencies-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-      - run:
-          name: Testing
-          command: npm run test
-      - run:
-          name: Building
-          command: npm run build
-      - save_cache:
-          key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - dist
-
-  publish_front:
-    executor: executor-node
-    steps:
-      - checkout:
-          path: /tmp/happy-hour-finder-server
-      - setup_remote_docker
-      - run:
-          name: Build Docker Image
-          command: docker build -t $IMAGE_NAME:$VERSION .
-      - run:
-          name: Push Docker Image
-          command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:$VERSION
-            docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:${CIRCLE_BRANCH}
-            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
+          name: Deploying Back
+          command: echo "Deploy !"
 
 workflows:
   version: 2
-  backend:
+  build:
     jobs:
-      - unit_tests_back
-      - integration_tests_back:
-          requires:
-            - unit_tests_back
+      - integration_tests_back
       - publish_back:
           requires:
             - integration_tests_back
@@ -167,14 +72,6 @@ workflows:
               only:
                 - master
                 - dev
-  frontend:
-    jobs:
-      - build_front
-      - publish_front:
+      - deploy_back:
           requires:
-            - build_front
-          filters:
-            branches:
-              only:
-                - master
-                - dev
+            - publish_back
