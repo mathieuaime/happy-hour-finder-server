@@ -40,23 +40,23 @@ public class TripServiceImpl implements TripService {
         .filter(bar -> bar.getHappyHour() != null)
         .collect(Collectors.toList());
 
-    bars.addAll(addBarsFromDb(request));
+    bars.addAll(addBarsFromDb(request.getCount(), bars));
 
     bars.sort(BarComparator.compareByHappyHour(LocalTime.now()));
 
     return Trip.create(bars);
   }
 
-  private List<Bar> addBarsFromDb(GenerateTripRequest request) {
+  private List<Bar> addBarsFromDb(int count, List<Bar> actualBars) {
     List<Bar> bars = Lists.newArrayList(barDao.findAll().iterator());
 
     Collections.shuffle(bars);
 
-    int limitBars = Math.min(request.getCount(), bars.size()) - request.getMandatoryBars().size();
+    int limitBars = Math.min(count, bars.size()) - actualBars.size();
 
     return bars.stream()
         .filter(bar -> bar.getHappyHour() != null)
-        .filter(bar -> !request.getMandatoryBars().contains(bar.getId()))
+        .filter(bar -> !actualBars.contains(bar))
         .limit(limitBars)
         .collect(Collectors.toList());
   }

@@ -51,7 +51,7 @@
     <jts-core.version>RELEASE</jts-core.version>
     <modelmapper.version>RELEASE</modelmapper.version>
     <modelmapper-spring.version>2.1.0</modelmapper-spring.version>
-    <mysql-connector-java.version>5.1.39</mysql-connector-java.version>
+    <mysql-connector-java.version>8.0.17</mysql-connector-java.version>
   </properties>
 
   <build>

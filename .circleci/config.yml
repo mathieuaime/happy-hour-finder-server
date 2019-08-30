@@ -29,9 +29,6 @@ jobs:
           name: Integration tests
           command: mvn integration-test
       - run:
-          name: Generate Code Coverage Report
-          command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore=false
-      - run:
           name: Run Code Quality Analysis
           command: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${CIRCLE_BRANCH}
       - store_test_results:
