@@ -3,18 +3,12 @@ package com.mathieuaime.happyhourfinder.api.bar;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
-class JsonToPointDeserializer extends JsonDeserializer<Point> {
-
-  private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),
-      26910);
+class JsonToPointDeserializer extends JsonDeserializer<GeoJsonPoint> {
 
   @Override
-  public Point deserialize(JsonParser parser, DeserializationContext context) {
+  public GeoJsonPoint deserialize(JsonParser parser, DeserializationContext context) {
     try {
       String text = parser.getText();
       if (text == null || text.length() <= 0) {
@@ -25,7 +19,7 @@ class JsonToPointDeserializer extends JsonDeserializer<Point> {
       double lat = Double.parseDouble(coordinates[0]);
       double lon = Double.parseDouble(coordinates[1]);
 
-      return geometryFactory.createPoint(new Coordinate(lat, lon));
+      return new GeoJsonPoint(lat, lon);
     } catch (Exception e) {
       return null;
     }

@@ -3,11 +3,13 @@ package com.mathieuaime.happyhourfinder.service.bar.impl;
 import com.mathieuaime.happyhourfinder.model.bar.Bar;
 import com.mathieuaime.happyhourfinder.repository.bar.BarDao;
 import com.mathieuaime.happyhourfinder.service.bar.BarService;
+import java.util.List;
 import java.util.Optional;
-import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,8 +33,8 @@ public class BarServiceImpl implements BarService {
   }
 
   @Override
-  public Page<Bar> findByDistance(Pageable pageable, Point center, long distance) {
-    return barDao.findAll(pageable);
+  public List<Bar> findWithin(double lat, double lon, double distance) {
+    return barDao.findByCoordinatesNear(new Point(lat, lon), new Distance(distance));
   }
 
   @Override

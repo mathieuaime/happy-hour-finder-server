@@ -2,14 +2,10 @@ package com.mathieuaime.happyhourfinder.facade.trip.request;
 
 import java.util.Collections;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 /**
  * The Generate trip request.
  */
-@Data
-@AllArgsConstructor
 public class GenerateTripRequest {
 
   private int count;
@@ -35,5 +31,18 @@ public class GenerateTripRequest {
    */
   public static GenerateTripRequest byCountAndMandatoryBars(int count, List<Long> mandatoryBars) {
     return new GenerateTripRequest(count, mandatoryBars);
+  }
+
+  private GenerateTripRequest(int count, List<Long> mandatoryBars) {
+    this.count = count;
+    this.mandatoryBars = mandatoryBars;
+  }
+
+  public int getCount() {
+    return count;
+  }
+
+  public List<Long> getMandatoryBars() {
+    return mandatoryBars;
   }
 }

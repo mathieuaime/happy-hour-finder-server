@@ -1,6 +1,7 @@
 package com.mathieuaime.happyhourfinder.facade.bar;
 
 import com.mathieuaime.happyhourfinder.api.bar.BarDto;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,16 @@ public interface BarFacade {
    * @return the optional bar
    */
   Optional<BarDto> findById(Long id);
+
+  /**
+   * Finds bars within a circle.
+   *
+   * @param lat the latitude
+   * @param lon the longitude
+   * @param distance the distance
+   * @return the list of bars
+   */
+  List<BarDto> findWithin(double lat, double lon, double distance);
 
   /**
    * Saves a bar.

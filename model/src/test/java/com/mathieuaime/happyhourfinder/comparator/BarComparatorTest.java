@@ -10,14 +10,10 @@ import org.junit.Test;
 
 public class BarComparatorTest {
 
-  private static final HappyHour HAPPY_HOUR_1 =
-      HappyHour.builder().begin(LocalTime.of(12, 0)).build();
-  private static final HappyHour HAPPY_HOUR_2 =
-      HappyHour.builder().begin(LocalTime.of(14, 0)).build();
-  private static final Bar BAR_1 =
-      Bar.builder().id(1L).name("Bar1").happyHour(HAPPY_HOUR_1).build();
-  private static final Bar BAR_2 =
-      Bar.builder().id(2L).name("Bar2").happyHour(HAPPY_HOUR_2).build();
+  private static final HappyHour HAPPY_HOUR_1 = new HappyHour().begin(LocalTime.of(12, 0));
+  private static final HappyHour HAPPY_HOUR_2 = new HappyHour().begin(LocalTime.of(14, 0));
+  private static final Bar BAR_1 = new Bar().id(1L).name("Bar1").happyHour(HAPPY_HOUR_1);
+  private static final Bar BAR_2 = new Bar().id(2L).name("Bar2").happyHour(HAPPY_HOUR_2);
 
   @Test
   public void compareSameBar() {

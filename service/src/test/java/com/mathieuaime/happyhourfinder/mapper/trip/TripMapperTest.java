@@ -16,8 +16,8 @@ public class TripMapperTest {
 
   @Test
   public void convertTripEntityToTripDto_shouldSucceed() {
-    Bar bar = Bar.builder().id(1L).name("Bar1").build();
-    BarDto barDto = BarDto.builder().id(1L).name("Bar1").build();
+    Bar bar = new Bar().id(1L).name("Bar1");
+    BarDto barDto = new BarDto().id(1L).name("Bar1");
 
     Trip trip = Trip.create(Collections.singletonList(bar));
 

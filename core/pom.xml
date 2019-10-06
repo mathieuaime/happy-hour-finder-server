@@ -10,14 +10,4 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>happy-hour-finder-core</artifactId>
-  <dependencies>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-core</artifactId>
-    </dependency>
-  </dependencies>
 </project>

@@ -7,11 +7,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.locationtech.jts.geom.Point;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsonToPointDeserializerTest {
@@ -31,7 +31,7 @@ public class JsonToPointDeserializerTest {
   public void deserialize() throws Exception {
     Mockito.when(parser.getText()).thenReturn("POINT (-1.0 2.0)");
 
-    Point point = deserializer.deserialize(parser, null);
+    GeoJsonPoint point = deserializer.deserialize(parser, null);
 
     assertEquals(-1.0, point.getX(), 0.01);
     assertEquals(2.0, point.getY(), 0.01);
@@ -41,7 +41,7 @@ public class JsonToPointDeserializerTest {
   public void deserializeWithBadFormat() throws Exception {
     Mockito.when(parser.getText()).thenReturn("POINT (A B)");
 
-    Point point = deserializer.deserialize(parser, null);
+    GeoJsonPoint point = deserializer.deserialize(parser, null);
 
     assertNull(point);
   }
@@ -50,7 +50,7 @@ public class JsonToPointDeserializerTest {
   public void deserializeWithNoData() throws Exception {
     Mockito.when(parser.getText()).thenReturn("");
 
-    Point point = deserializer.deserialize(parser, null);
+    GeoJsonPoint point = deserializer.deserialize(parser, null);
 
     assertNull(point);
   }
@@ -59,7 +59,7 @@ public class JsonToPointDeserializerTest {
   public void deserializeWithNullData() throws Exception {
     Mockito.when(parser.getText()).thenReturn(null);
 
-    Point point = deserializer.deserialize(parser, null);
+    GeoJsonPoint point = deserializer.deserialize(parser, null);
 
     assertNull(point);
   }

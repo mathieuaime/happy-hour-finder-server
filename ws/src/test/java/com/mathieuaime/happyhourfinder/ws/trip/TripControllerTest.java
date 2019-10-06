@@ -41,9 +41,9 @@ public class TripControllerTest {
   @MockBean
   private TripFacade tripFacade;
 
-  private static final BarDto BAR_DTO = BarDto.builder().id(1L).name("Bar").build();
+  private static final BarDto BAR_DTO = new BarDto().id(1L).name("Bar");
 
-  private static final TripDto TRIP_DTO = TripDto.create(Collections.singletonList(BAR_DTO));
+  private static final TripDto TRIP_DTO = new TripDto().bars(Collections.singletonList(BAR_DTO));
 
   @Test
   public void getStatus() throws Exception {

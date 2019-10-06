@@ -18,14 +18,12 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BarServiceImplTest {
@@ -35,13 +33,10 @@ public class BarServiceImplTest {
 
   private BarService mockBarService;
 
-  private static final GeometryFactory geometryFactory =
-      new GeometryFactory(new PrecisionModel(), 26910);
-
-  private static final Bar BAR_1 = Bar.builder().id(1L).name("Bar1")
-      .coordinates(geometryFactory.createPoint(new Coordinate(1, 2))).build();
-  private static final Bar BAR_2 = Bar.builder().id(2L).name("Bar2")
-      .coordinates(geometryFactory.createPoint(new Coordinate(2, 3))).build();
+  private static final Bar BAR_1 =
+      new Bar().id(1L).name("Bar1").coordinates(new GeoJsonPoint(1, 2));
+  private static final Bar BAR_2 =
+      new Bar().id(2L).name("Bar2").coordinates(new GeoJsonPoint(2, 3));
 
   @Before
   public void setUp() {
@@ -64,10 +59,10 @@ public class BarServiceImplTest {
   @Test
   public void testFindById() {
     when(barDao.findById(BAR_1.getId())).thenReturn(Optional.of(BAR_1));
-    Optional<Bar> retrivedBar = mockBarService.findById(BAR_1.getId());
+    Optional<Bar> retrievedBar = mockBarService.findById(BAR_1.getId());
 
-    assertTrue(retrivedBar.isPresent());
-    assertEquals(BAR_1, retrivedBar.get());
+    assertTrue(retrievedBar.isPresent());
+    assertEquals(BAR_1, retrievedBar.get());
 
     verify(barDao).findById(anyLong());
     verifyNoMoreInteractions(barDao);
@@ -75,7 +70,7 @@ public class BarServiceImplTest {
 
   @Test
   public void testSave() {
-    Bar bar = Bar.builder().name("Bar1").build();
+    Bar bar = new Bar().name("Bar1");
     when(barDao.save(bar)).then(invocationOnMock -> {
       Bar invocBar = invocationOnMock.getArgument(0);
       invocBar.setId(1L);

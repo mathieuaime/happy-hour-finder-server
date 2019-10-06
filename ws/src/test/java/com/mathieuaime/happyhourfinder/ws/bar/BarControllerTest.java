@@ -31,16 +31,13 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -58,22 +55,18 @@ public class BarControllerTest {
   @MockBean
   private BarFacade barFacade;
 
-  private static final GeometryFactory geometryFactory =
-      new GeometryFactory(new PrecisionModel(), 26910);
-
   private ObjectMapper objectMapper = new ObjectMapper();
 
-  private static final Point POINT_1 = geometryFactory.createPoint(new Coordinate(1, 2));
-  private static final Point POINT_2 = geometryFactory.createPoint(new Coordinate(2, 3));
+  private static final GeoJsonPoint POINT_1 = new GeoJsonPoint(1, 2);
+  private static final GeoJsonPoint POINT_2 = new GeoJsonPoint(2, 3);
 
   private static final HappyHourDto HAPPY_HOUR_DTO =
-      HappyHourDto.builder().begin("16:00").duration("PT1H").build();
+      new HappyHourDto().begin("16:00").duration("PT1H");
 
   private static final BarDto BAR_DTO_1 =
-      BarDto.builder().id(1L).name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR_DTO).build();
-  private static final BarDto BAR_DTO_2 =
-      BarDto.builder().id(2L).name("Bar2").coordinates(POINT_2).build();
-  private static final BarDto BAR_DTO_3 = BarDto.builder().id(3L).name("Bar3").build();
+      new BarDto().id(1L).name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR_DTO);
+  private static final BarDto BAR_DTO_2 = new BarDto().id(2L).name("Bar2").coordinates(POINT_2);
+  private static final BarDto BAR_DTO_3 = new BarDto().id(3L).name("Bar3");
 
   @After
   public void tearDown() {

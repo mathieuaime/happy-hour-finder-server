@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import org.locationtech.jts.geom.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
-class PointToJsonSerializer extends JsonSerializer<Point> {
+class PointToJsonSerializer extends JsonSerializer<GeoJsonPoint> {
 
   @Override
-  public void serialize(Point value, JsonGenerator generator, SerializerProvider serializers)
+  public void serialize(GeoJsonPoint value, JsonGenerator generator, SerializerProvider serializers)
       throws IOException {
     String jsonValue = "null";
     if (value != null) {

@@ -1,8 +1,8 @@
 package com.mathieuaime.happyhourfinder.service.bar;
 
 import com.mathieuaime.happyhourfinder.model.bar.Bar;
+import java.util.List;
 import java.util.Optional;
-import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,12 +30,12 @@ public interface BarService {
   /**
    * Finds pageable bars by distance.
    *
-   * @param pageable the pageable
-   * @param center the center
+   * @param lat the latitude
+   * @param lon the longitude
    * @param distance the distance
    * @return the pageable bars
    */
-  Page<Bar> findByDistance(Pageable pageable, Point center, long distance);
+  List<Bar> findWithin(double lat, double lon, double distance);
 
   /**
    * Saves a bar.

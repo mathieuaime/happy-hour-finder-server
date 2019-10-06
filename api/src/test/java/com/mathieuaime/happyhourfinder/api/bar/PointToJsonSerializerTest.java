@@ -6,13 +6,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PointToJsonSerializerTest {
@@ -23,9 +20,6 @@ public class PointToJsonSerializerTest {
   @InjectMocks
   private PointToJsonSerializer serializer;
 
-  private static final GeometryFactory geometryFactory =
-      new GeometryFactory(new PrecisionModel(), 26910);
-
   @Before
   public void setUp() {
     serializer = new PointToJsonSerializer();
@@ -33,7 +27,7 @@ public class PointToJsonSerializerTest {
 
   @Test
   public void serialize() throws Exception {
-    Point point = geometryFactory.createPoint(new Coordinate(-1, 2));
+    GeoJsonPoint point = new GeoJsonPoint(-1, 2);
 
     serializer.serialize(point, generator, null);
 

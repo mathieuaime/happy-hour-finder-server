@@ -4,10 +4,11 @@ import com.mathieuaime.happyhourfinder.model.bar.Bar;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
 public class BarComparator {
+
+  private BarComparator() {
+  }
 
   public static Comparator<Bar> compareByHappyHour(LocalTime ref) {
     return (o1, o2) -> {

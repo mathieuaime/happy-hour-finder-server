@@ -1,20 +1,23 @@
 package com.mathieuaime.happyhourfinder.model.trip;
 
+import com.google.common.collect.ImmutableList;
 import com.mathieuaime.happyhourfinder.model.bar.Bar;
 import java.util.Collections;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 
-@Data
-@Builder
-@AllArgsConstructor(staticName = "create")
 public class Trip {
 
-  private static final Trip EMPTY = Trip.builder().bars(Collections.emptyList()).build();
+  private static final Trip EMPTY = Trip.create(Collections.emptyList());
 
   private final List<Bar> bars;
+
+  public static Trip create(Iterable<Bar> bars) {
+    return new Trip(ImmutableList.copyOf(bars));
+  }
+
+  private Trip(List<Bar> bars) {
+    this.bars = bars;
+  }
 
   public List<Bar> getBars() {
     return bars;
