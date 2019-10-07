@@ -1,7 +1,9 @@
 package com.mathieuaime.happyhourfinder.facade.trip.request;
 
+import com.google.common.base.MoreObjects;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Generate trip request.
@@ -44,5 +46,31 @@ public class GenerateTripRequest {
 
   public List<Long> getMandatoryBars() {
     return mandatoryBars;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    GenerateTripRequest that = (GenerateTripRequest) o;
+    return count == that.count &&
+        Objects.equals(mandatoryBars, that.mandatoryBars);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(count, mandatoryBars);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("count", count)
+        .add("mandatoryBars", mandatoryBars)
+        .toString();
   }
 }

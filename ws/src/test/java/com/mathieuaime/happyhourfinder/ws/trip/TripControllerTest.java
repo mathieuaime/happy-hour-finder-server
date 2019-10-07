@@ -4,6 +4,7 @@ import static com.mathieuaime.happyhourfinder.ws.common.constant.Paths.STATUS;
 import static com.mathieuaime.happyhourfinder.ws.common.constant.Paths.Trip.TRIPS;
 import static com.mathieuaime.happyhourfinder.ws.common.constant.Paths.VERSION;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,6 +19,7 @@ import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
 import com.mathieuaime.happyhourfinder.type.IntegrationTest;
 import java.util.Arrays;
 import java.util.Collections;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -45,6 +47,11 @@ public class TripControllerTest {
 
   private static final TripDto TRIP_DTO = new TripDto().bars(Collections.singletonList(BAR_DTO));
 
+  @Before
+  public void setUp() throws Exception {
+    when(tripFacade.generate(any(GenerateTripRequest.class))).thenReturn(TRIP_DTO);
+  }
+
   @Test
   public void getStatus() throws Exception {
     mockMvc.perform(get(VERSION + TRIPS + STATUS)
@@ -55,37 +62,29 @@ public class TripControllerTest {
 
   @Test
   public void generateTripWithDefaultValue() throws Exception {
-    GenerateTripRequest request = GenerateTripRequest.byCount(4);
-    when(tripFacade.generate(request)).thenReturn(TRIP_DTO);
-
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(1)));
 
+    GenerateTripRequest request = GenerateTripRequest.byCount(4);
     verify(tripFacade).generate(request);
   }
 
   @Test
   public void generateTripWithCount() throws Exception {
-    GenerateTripRequest request = GenerateTripRequest.byCount(1);
-    when(tripFacade.generate(request)).thenReturn(TRIP_DTO);
-
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "1"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(1)));
 
+    GenerateTripRequest request = GenerateTripRequest.byCount(1);
     verify(tripFacade).generate(request);
   }
 
   @Test
   public void generateTripWithCountAndMandatoryBars() throws Exception {
-    GenerateTripRequest request =
-        GenerateTripRequest.byCountAndMandatoryBars(1, Arrays.asList(1L, 2L));
-    when(tripFacade.generate(request)).thenReturn(TRIP_DTO);
-
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "1")
@@ -94,6 +93,8 @@ public class TripControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(1)));
 
+    GenerateTripRequest request =
+        GenerateTripRequest.byCountAndMandatoryBars(1, Arrays.asList(1L, 2L));
     verify(tripFacade).generate(request);
   }
 }
