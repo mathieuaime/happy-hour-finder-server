@@ -15,10 +15,6 @@ public class HappyHour {
     return begin;
   }
 
-  public void setBegin(LocalTime begin) {
-    this.begin = begin;
-  }
-
   public HappyHour begin(LocalTime begin) {
     this.begin = begin;
     return this;
@@ -26,10 +22,6 @@ public class HappyHour {
 
   public Duration getDuration() {
     return duration;
-  }
-
-  public void setDuration(Duration duration) {
-    this.duration = duration;
   }
 
   public HappyHour duration(Duration duration) {

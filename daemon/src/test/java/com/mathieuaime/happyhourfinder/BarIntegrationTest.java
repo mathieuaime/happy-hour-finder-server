@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -68,8 +69,9 @@ public class BarIntegrationTest {
   }
 
   private Bar generateBar(int i) {
-    return new Bar().name("Bar" + i).coordinates(new GeoJsonPoint(i, i + 1)).happyHour(
-        new HappyHour().begin(LocalTime.of((10 + i) % 24, 0)).duration(Duration.ofHours(2)));
+    return new Bar().uuid("uuid-" + i).name("Bar" + i).coordinates(new GeoJsonPoint(i, i + 1))
+        .happyHour(
+            new HappyHour().begin(LocalTime.of((10 + i) % 24, 0)).duration(Duration.ofHours(2)));
   }
 
   @After
@@ -89,13 +91,13 @@ public class BarIntegrationTest {
   }
 
   @Test
-  public void getBarById() throws Exception {
-    Long barId = barDao.findByName("Bar1").map(Bar::getId).orElse(0L);
+  public void getBarByUuid() throws Exception {
+    String barUuid = "uuid-1";
 
-    mockMvc.perform(get(VERSION + BARS + "{id}", barId)
+    mockMvc.perform(get(VERSION + BARS + "{uuid}", barUuid)
         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(is(barId), Long.class))
+        .andExpect(jsonPath("$.id").value(is(barUuid), String.class))
         .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")))
         .andExpect(jsonPath("$.happyHour.begin", is("11:00")))
@@ -104,20 +106,22 @@ public class BarIntegrationTest {
 
   @Test
   public void getBarByIdNotFound() throws Exception {
-    mockMvc.perform(get(VERSION + BARS + "{id}", 0L)
+    mockMvc.perform(get(VERSION + BARS + "{uuid}", "1234")
         .contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 
   @Test
   public void saveBasicBar() throws Exception {
-    mockMvc.perform(post(VERSION + BARS)
+    MockHttpServletResponse response = mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(BASIC_BAR)))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk()).andReturn().getResponse();
 
-    Optional<Bar> newBar = barDao.findByName(BASIC_BAR.getName());
-    assertThat(newBar).map(Bar::getId).isNotNull();
+    BarDto barCreated = objectMapper.readValue(response.getContentAsString(), BarDto.class);
+
+    Optional<Bar> newBar = barDao.findById(barCreated.getUuid());
+    assertThat(newBar).map(Bar::getUuid).isNotNull();
     assertThat(newBar).map(Bar::getName).contains(BASIC_BAR.getName());
     assertThat(newBar).map(Bar::getCoordinates).isEmpty();
     assertThat(newBar).map(Bar::getHappyHour).isEmpty();
@@ -125,13 +129,15 @@ public class BarIntegrationTest {
 
   @Test
   public void saveFullBar() throws Exception {
-    mockMvc.perform(post(VERSION + BARS)
+    MockHttpServletResponse response = mockMvc.perform(post(VERSION + BARS)
         .contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(FULL_BAR)))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk()).andReturn().getResponse();
 
-    Optional<Bar> newBar = barDao.findByName(FULL_BAR.getName());
-    assertThat(newBar).map(Bar::getId).isNotNull();
+    BarDto barCreated = objectMapper.readValue(response.getContentAsString(), BarDto.class);
+
+    Optional<Bar> newBar = barDao.findById(barCreated.getUuid());
+    assertThat(newBar).map(Bar::getUuid).isNotNull();
     assertThat(newBar).map(Bar::getName).contains(FULL_BAR.getName());
     assertThat(newBar).map(Bar::getCoordinates).contains(POINT);
     assertThat(newBar).map(Bar::getHappyHour).contains(HAPPY_HOUR);
@@ -139,12 +145,12 @@ public class BarIntegrationTest {
 
   @Test
   public void removeBar() throws Exception {
-    Long barId = barDao.findByName("Bar1").map(Bar::getId).orElse(0L);
+    String uuid = "uuid-1";
 
-    mockMvc.perform(delete(VERSION + BARS + "{id}", barId))
+    mockMvc.perform(delete(VERSION + BARS + "{uuid}", uuid))
         .andExpect(status().isOk());
 
-    Optional<Bar> bar = barDao.findByName("Bar1");
+    Optional<Bar> bar = barDao.findById(uuid);
     assertThat(bar).isEmpty();
   }
 }

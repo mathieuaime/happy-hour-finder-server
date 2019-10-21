@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 public class BarDto {
 
-  private Long id;
+  private String uuid;
 
   private String name;
 
@@ -18,16 +18,16 @@ public class BarDto {
 
   private HappyHourDto happyHour;
 
-  public Long getId() {
-    return id;
+  public String getUuid() {
+    return uuid;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
-  public BarDto id(Long id) {
-    this.id = id;
+  public BarDto uuid(String uuid) {
+    this.uuid = uuid;
     return this;
   }
 
@@ -79,7 +79,7 @@ public class BarDto {
       return false;
     }
     BarDto barDto = (BarDto) o;
-    return Objects.equals(id, barDto.id) &&
+    return Objects.equals(uuid, barDto.uuid) &&
         Objects.equals(name, barDto.name) &&
         Objects.equals(coordinates, barDto.coordinates) &&
         Objects.equals(happyHour, barDto.happyHour);
@@ -87,13 +87,13 @@ public class BarDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, coordinates, happyHour);
+    return Objects.hash(uuid, name, coordinates, happyHour);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("id", id)
+        .add("uuid", uuid)
         .add("name", name)
         .add("coordinates", coordinates)
         .add("happyHour", happyHour)

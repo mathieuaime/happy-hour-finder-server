@@ -11,19 +11,19 @@ public class Trip {
 
   private final List<Bar> bars;
 
-  public static Trip create(Iterable<Bar> bars) {
-    return new Trip(ImmutableList.copyOf(bars));
-  }
-
   private Trip(List<Bar> bars) {
     this.bars = bars;
   }
 
-  public List<Bar> getBars() {
-    return bars;
+  public static Trip create(Iterable<Bar> bars) {
+    return new Trip(ImmutableList.copyOf(bars));
   }
 
   public static Trip empty() {
     return EMPTY;
+  }
+
+  public List<Bar> getBars() {
+    return bars;
   }
 }

@@ -4,7 +4,7 @@ package com.mathieuaime.happyhourfinder.service.bar.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,9 +34,9 @@ public class BarServiceImplTest {
   private BarService mockBarService;
 
   private static final Bar BAR_1 =
-      new Bar().id(1L).name("Bar1").coordinates(new GeoJsonPoint(1, 2));
+      new Bar().uuid("uuid-1").name("Bar1").coordinates(new GeoJsonPoint(1, 2));
   private static final Bar BAR_2 =
-      new Bar().id(2L).name("Bar2").coordinates(new GeoJsonPoint(2, 3));
+      new Bar().uuid("uuid-2").name("Bar2").coordinates(new GeoJsonPoint(2, 3));
 
   @Before
   public void setUp() {
@@ -57,30 +57,29 @@ public class BarServiceImplTest {
   }
 
   @Test
-  public void testFindById() {
-    when(barDao.findById(BAR_1.getId())).thenReturn(Optional.of(BAR_1));
-    Optional<Bar> retrievedBar = mockBarService.findById(BAR_1.getId());
+  public void testFindByUuid() {
+    when(barDao.findById(BAR_1.getUuid())).thenReturn(Optional.of(BAR_1));
+    Optional<Bar> retrievedBar = mockBarService.findByUuid(BAR_1.getUuid());
 
     assertTrue(retrievedBar.isPresent());
     assertEquals(BAR_1, retrievedBar.get());
 
-    verify(barDao).findById(anyLong());
+    verify(barDao).findById(anyString());
     verifyNoMoreInteractions(barDao);
   }
 
   @Test
   public void testSave() {
-    Bar bar = new Bar().name("Bar1");
+    Bar bar = new Bar().name("Bar3");
     when(barDao.save(bar)).then(invocationOnMock -> {
       Bar invocBar = invocationOnMock.getArgument(0);
-      invocBar.setId(1L);
-      return invocBar;
+      return invocBar.uuid("uuid-3");
     });
 
     Bar savedBar = mockBarService.save(bar);
 
-    assertEquals(Long.valueOf(1L), savedBar.getId());
-    assertEquals("Bar1", savedBar.getName());
+    assertEquals("uuid-3", savedBar.getUuid());
+    assertEquals("Bar3", savedBar.getName());
 
     verify(barDao).save(any(Bar.class));
     verifyNoMoreInteractions(barDao);
@@ -88,10 +87,10 @@ public class BarServiceImplTest {
 
   @Test
   public void testDeleteById() {
-    doNothing().when(barDao).deleteById(BAR_1.getId());
-    mockBarService.deleteById(BAR_1.getId());
+    doNothing().when(barDao).deleteById(BAR_1.getUuid());
+    mockBarService.deleteByUuid(BAR_1.getUuid());
 
-    verify(barDao).deleteById(anyLong());
+    verify(barDao).deleteById(BAR_1.getUuid());
     verifyNoMoreInteractions(barDao);
   }
 }

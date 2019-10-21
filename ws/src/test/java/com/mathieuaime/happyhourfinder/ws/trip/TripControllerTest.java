@@ -43,7 +43,7 @@ public class TripControllerTest {
   @MockBean
   private TripFacade tripFacade;
 
-  private static final BarDto BAR_DTO = new BarDto().id(1L).name("Bar");
+  private static final BarDto BAR_DTO = new BarDto();
 
   private static final TripDto TRIP_DTO = new TripDto().bars(Collections.singletonList(BAR_DTO));
 
@@ -88,13 +88,13 @@ public class TripControllerTest {
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "1")
-        .param("bars", "1")
-        .param("bars", "2"))
+        .param("bars", "uuid-1")
+        .param("bars", "uuid-2"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(1)));
 
     GenerateTripRequest request =
-        GenerateTripRequest.byCountAndMandatoryBars(1, Arrays.asList(1L, 2L));
+        GenerateTripRequest.byCountAndMandatoryBars(1, Arrays.asList("uuid-1", "uuid-2"));
     verify(tripFacade).generate(request);
   }
 }

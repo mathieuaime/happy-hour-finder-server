@@ -64,9 +64,10 @@ public class BarControllerTest {
       new HappyHourDto().begin("16:00").duration("PT1H");
 
   private static final BarDto BAR_DTO_1 =
-      new BarDto().id(1L).name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR_DTO);
-  private static final BarDto BAR_DTO_2 = new BarDto().id(2L).name("Bar2").coordinates(POINT_2);
-  private static final BarDto BAR_DTO_3 = new BarDto().id(3L).name("Bar3");
+      new BarDto().uuid("uuid-1").name("Bar1").coordinates(POINT_1).happyHour(HAPPY_HOUR_DTO);
+  private static final BarDto BAR_DTO_2 =
+      new BarDto().uuid("uuid-2").name("Bar2").coordinates(POINT_2);
+  private static final BarDto BAR_DTO_3 = new BarDto().uuid("uuid-1").name("Bar3");
 
   @After
   public void tearDown() {
@@ -91,10 +92,10 @@ public class BarControllerTest {
         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content", hasSize(2)))
-        .andExpect(jsonPath("$.content[0].id", is(1)))
+        .andExpect(jsonPath("$.content[0].uuid", is("uuid-1")))
         .andExpect(jsonPath("$.content[0].name", is("Bar1")))
         .andExpect(jsonPath("$.content[0].coordinates", is("POINT (1.0 2.0)")))
-        .andExpect(jsonPath("$.content[1].id", is(2)))
+        .andExpect(jsonPath("$.content[1].uuid", is("uuid-2")))
         .andExpect(jsonPath("$.content[1].name", is("Bar2")))
         .andExpect(jsonPath("$.content[1].coordinates", is("POINT (2.0 3.0)")));
 
@@ -102,32 +103,32 @@ public class BarControllerTest {
   }
 
   @Test
-  public void getBarById() throws Exception {
-    Long barId = BAR_DTO_1.getId();
+  public void getBarByUuidd() throws Exception {
+    String uuid = BAR_DTO_1.getUuid();
 
-    when(barFacade.findById(barId)).thenReturn(Optional.of(BAR_DTO_1));
+    when(barFacade.findByUuid(uuid)).thenReturn(Optional.of(BAR_DTO_1));
 
-    mockMvc.perform(get(VERSION + BARS + "{id}", barId)
+    mockMvc.perform(get(VERSION + BARS + "{uuid}", uuid)
         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.uuid", is("uuid-1")))
         .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")))
         .andExpect(jsonPath("$.happyHour.begin", is("16:00")))
         .andExpect(jsonPath("$.happyHour.duration", is("PT1H")));
 
-    verify(barFacade, times(1)).findById(barId);
+    verify(barFacade, times(1)).findByUuid(uuid);
   }
 
   @Test
   public void getBarByIdNotFound() throws Exception {
-    Long barId = BAR_DTO_1.getId();
+    String uuid = BAR_DTO_1.getUuid();
 
-    mockMvc.perform(get(VERSION + BARS + "{id}", 1L)
+    mockMvc.perform(get(VERSION + BARS + "{uuid}", uuid)
         .contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
 
-    verify(barFacade, times(1)).findById(barId);
+    verify(barFacade, times(1)).findByUuid(uuid);
   }
 
   @Test
@@ -139,7 +140,7 @@ public class BarControllerTest {
         .contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(BAR_DTO_1)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.uuid", is("uuid-1")))
         .andExpect(jsonPath("$.name", is("Bar1")))
         .andExpect(jsonPath("$.coordinates", is("POINT (1.0 2.0)")));
 
@@ -155,7 +156,7 @@ public class BarControllerTest {
         .contentType(APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(BAR_DTO_3)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(3)))
+        .andExpect(jsonPath("$.id", is("uuid-3")))
         .andExpect(jsonPath("$.name", is("Bar3")))
         .andExpect(jsonPath("$.coordinates", nullValue()));
 
@@ -164,13 +165,13 @@ public class BarControllerTest {
 
   @Test
   public void removeBar() throws Exception {
-    Long barId = BAR_DTO_1.getId();
+    String uuid = BAR_DTO_1.getUuid();
 
-    doNothing().when(barFacade).deleteById(barId);
+    doNothing().when(barFacade).deleteByUuid(uuid);
 
-    mockMvc.perform(delete(VERSION + BARS + "{id}", barId))
+    mockMvc.perform(delete(VERSION + BARS + "{uuid}", uuid))
         .andExpect(status().isOk());
 
-    verify(barFacade, times(1)).deleteById(barId);
+    verify(barFacade, times(1)).deleteByUuid(uuid);
   }
 }

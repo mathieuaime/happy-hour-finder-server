@@ -9,13 +9,13 @@ interface TestData {
 
   interface Bars {
 
-    Bar BAR_1 = new Bar().id(1L).name("Bar1").happyHour(HappyHours.HAPPY_HOUR_1);
-    Bar BAR_2 = new Bar().id(2L).name("Bar2").happyHour(HappyHours.HAPPY_HOUR_2);
-    Bar BAR_3 = new Bar().id(3L).name("Bar3").happyHour(HappyHours.HAPPY_HOUR_3);
-    Bar BAR_4 = new Bar().id(4L).name("Bar4").happyHour(HappyHours.HAPPY_HOUR_4);
-    Bar BAR_5 = new Bar().id(5L).name("Bar5").happyHour(HappyHours.HAPPY_HOUR_5);
-    Bar BAR_6 = new Bar().id(6L).name("Bar6").happyHour(HappyHours.HAPPY_HOUR_6);
-    Bar BAR_7 = new Bar().id(7L).name("Bar7");
+    Bar BAR_1 = new Bar().uuid("uuid-1").name("Bar1").happyHour(HappyHours.HAPPY_HOUR_1);
+    Bar BAR_2 = new Bar().uuid("uuid-2").name("Bar2").happyHour(HappyHours.HAPPY_HOUR_2);
+    Bar BAR_3 = new Bar().uuid("uuid-3").name("Bar3").happyHour(HappyHours.HAPPY_HOUR_3);
+    Bar BAR_4 = new Bar().uuid("uuid-4").name("Bar4").happyHour(HappyHours.HAPPY_HOUR_4);
+    Bar BAR_5 = new Bar().uuid("uuid-5").name("Bar5").happyHour(HappyHours.HAPPY_HOUR_5);
+    Bar BAR_6 = new Bar().uuid("uuid-6").name("Bar6").happyHour(HappyHours.HAPPY_HOUR_6);
+    Bar BAR_7 = new Bar().uuid("uuid-7").name("Bar7");
   }
 
   interface HappyHours {

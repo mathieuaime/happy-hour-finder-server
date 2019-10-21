@@ -34,8 +34,8 @@ public class TripController {
   @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public TripDto generateTrip(
       @RequestParam(value = "count", required = false, defaultValue = "4") int count,
-      @RequestParam(value = "bars", required = false, defaultValue = "") List<Long> barIds) {
-    GenerateTripRequest request = GenerateTripRequest.byCountAndMandatoryBars(count, barIds);
+      @RequestParam(value = "bars", required = false, defaultValue = "") List<String> uuids) {
+    GenerateTripRequest request = GenerateTripRequest.byCountAndMandatoryBars(count, uuids);
     return tripFacade.generate(request);
   }
 }

@@ -45,7 +45,7 @@ public class TripIntegrationTest {
   }
 
   private Bar generateBar(int i) {
-    return new Bar().name("Bar" + i).coordinates(new GeoJsonPoint(i, i + 1)).happyHour(
+    return new Bar().uuid("uuid-" + i).name("Bar" + i).coordinates(new GeoJsonPoint(i, i + 1)).happyHour(
         new HappyHour().begin(LocalTime.of((10 + i) % 24, 0)).duration(Duration.ofHours(2)));
   }
 
@@ -76,8 +76,8 @@ public class TripIntegrationTest {
     mockMvc.perform(get(VERSION + TRIPS)
         .contentType(MediaType.APPLICATION_JSON_UTF8)
         .param("count", "5")
-        .param("bars", "1")
-        .param("bars", "2"))
+        .param("bars", "uuid-1")
+        .param("bars", "uuid-2"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.bars", hasSize(5)));
   }

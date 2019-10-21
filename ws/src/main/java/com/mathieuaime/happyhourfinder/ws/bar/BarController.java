@@ -46,9 +46,9 @@ public class BarController {
     return barFacade.findWithin(lat, lon, distance);
   }
 
-  @GetMapping("/{id}")
-  public BarDto getBar(@PathVariable Long id) {
-    return barFacade.findById(id).orElseThrow(BarNotFoundException::new);
+  @GetMapping("/{uuid}")
+  public BarDto getBar(@PathVariable String uuid) {
+    return barFacade.findByUuid(uuid).orElseThrow(BarNotFoundException::new);
   }
 
   @PostMapping
@@ -56,8 +56,8 @@ public class BarController {
     return barFacade.save(barDto);
   }
 
-  @DeleteMapping("/{id}")
-  public void deleteBar(@PathVariable Long id) {
-    barFacade.deleteById(id);
+  @DeleteMapping("/{uuid}")
+  public void deleteBar(@PathVariable String uuid) {
+    barFacade.deleteByUuid(uuid);
   }
 }

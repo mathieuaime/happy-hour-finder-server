@@ -15,11 +15,7 @@
     <!-- Internal -->
     <dependency>
       <groupId>com.mathieuaime</groupId>
-      <artifactId>happy-hour-finder-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.mathieuaime</groupId>
-      <artifactId>happy-hour-finder-ws</artifactId>
+      <artifactId>happy-hour-finder-service-api</artifactId>
     </dependency>
 
     <!-- External -->

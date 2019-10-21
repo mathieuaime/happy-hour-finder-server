@@ -28,8 +28,8 @@ public class BarServiceImpl implements BarService {
   }
 
   @Override
-  public Optional<Bar> findById(Long id) {
-    return barDao.findById(id);
+  public Optional<Bar> findByUuid(String uuid) {
+    return barDao.findById(uuid);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class BarServiceImpl implements BarService {
   }
 
   @Override
-  public void deleteById(Long barId) {
-    barDao.deleteById(barId);
+  public void deleteByUuid(String uuid) {
+    barDao.deleteById(uuid);
   }
 }

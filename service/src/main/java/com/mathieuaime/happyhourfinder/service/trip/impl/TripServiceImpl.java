@@ -6,7 +6,6 @@ import com.mathieuaime.happyhourfinder.model.bar.Bar;
 import com.mathieuaime.happyhourfinder.model.trip.Trip;
 import com.mathieuaime.happyhourfinder.repository.bar.BarDao;
 import com.mathieuaime.happyhourfinder.service.trip.TripService;
-import com.mathieuaime.happyhourfinder.facade.trip.request.GenerateTripRequest;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -26,25 +25,26 @@ public class TripServiceImpl implements TripService {
   }
 
   @Override
-  public Trip generate(GenerateTripRequest request) {
-    List<Long> mandatoryBars = request.getMandatoryBars();
-
-    if (mandatoryBars == null || request.getCount() < mandatoryBars.size()) {
+  public Trip generate(int count, List<String> mandatoryBars) {
+    if (mandatoryBars == null || count < mandatoryBars.size()) {
       return Trip.empty();
     }
 
-    List<Bar> bars = mandatoryBars.stream()
+    List<Bar> bars = getMandatoryBars(mandatoryBars);
+
+    bars.addAll(addBarsFromDb(count, bars));
+    bars.sort(BarComparator.compareByHappyHour(LocalTime.now()));
+
+    return Trip.create(bars);
+  }
+
+  private List<Bar> getMandatoryBars(List<String> mandatoryBars) {
+    return mandatoryBars.stream()
         .map(barDao::findById)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .filter(bar -> bar.getHappyHour() != null)
         .collect(Collectors.toList());
-
-    bars.addAll(addBarsFromDb(request.getCount(), bars));
-
-    bars.sort(BarComparator.compareByHappyHour(LocalTime.now()));
-
-    return Trip.create(bars);
   }
 
   private List<Bar> addBarsFromDb(int count, List<Bar> actualBars) {
