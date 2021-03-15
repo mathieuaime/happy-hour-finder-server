@@ -1,18 +1,11 @@
 package com.mathieuaime.hhf.web.mapper;
 
-import com.mathieuaime.hhf.api.model.Bar;
+import com.mathieuaime.hhf.model.Bar;
 import com.mathieuaime.hhf.web.dto.BarDto;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public final class BarMapper {
     private BarMapper() {
         throw new AssertionError();
-    }
-
-    public static List<BarDto> toDto(List<Bar> models) {
-        return models.stream().map(BarMapper::toDto).collect(Collectors.toList());
     }
 
     public static BarDto toDto(Bar model) {
@@ -23,5 +16,9 @@ public final class BarMapper {
         dto.setClose(model.getClose());
         dto.setHappyHours(HappyHourMapper.toDto(model.getHappyHours()));
         return dto;
+    }
+
+    public static Bar toModel(BarDto dto) {
+        return new Bar(dto.getId(), dto.getName(), dto.getOpen(), dto.getClose());
     }
 }

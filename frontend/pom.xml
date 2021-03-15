@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
-        <frontend-maven-plugin.nodeVersion>v14.15.4</frontend-maven-plugin.nodeVersion>
+        <frontend-maven-plugin.nodeVersion>v15.11.0</frontend-maven-plugin.nodeVersion>
     </properties>
 
     <build>
@@ -68,17 +68,6 @@
                         <phase>verify</phase>
                         <configuration>
                             <arguments>run lint</arguments>
-                        </configuration>
-                    </execution>
-                    <!-- Run Unit tests with Jest -->
-                    <execution>
-                        <id>npm run test:unit</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>test</phase>
-                        <configuration>
-                            <arguments>run test:unit</arguments>
                         </configuration>
                     </execution>
                 </executions>

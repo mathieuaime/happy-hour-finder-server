@@ -1,4 +1,4 @@
-package com.mathieuaime.hhf.api.model;
+package com.mathieuaime.hhf.model;
 
 import java.time.LocalTime;
 import java.util.Collections;

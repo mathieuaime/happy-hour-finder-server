@@ -1,4 +1,4 @@
-package com.mathieuaime.hhf.repository;
+package com.mathieuaime.hhf.service;
 
 import com.mathieuaime.hhf.model.Bar;
 import com.mathieuaime.hhf.model.request.BarSearch;
@@ -6,7 +6,7 @@ import com.mathieuaime.hhf.model.request.BarSearch;
 import java.util.List;
 import java.util.UUID;
 
-public interface BarRepository {
+public interface BarService {
     List<Bar> findAll(BarSearch search);
 
     Bar findById(UUID id);

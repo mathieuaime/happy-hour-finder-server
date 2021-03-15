@@ -1,6 +1,6 @@
 package com.mathieuaime.hhf.web.mapper;
 
-import com.mathieuaime.hhf.api.model.HappyHour;
+import com.mathieuaime.hhf.model.HappyHour;
 import com.mathieuaime.hhf.web.dto.HappyHourDto;
 
 import java.util.List;

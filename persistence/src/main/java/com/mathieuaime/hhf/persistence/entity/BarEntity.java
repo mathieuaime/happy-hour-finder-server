@@ -1,4 +1,4 @@
-package com.mathieuaime.hhf.persistence.model;
+package com.mathieuaime.hhf.persistence.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
