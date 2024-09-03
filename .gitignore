@@ -16,6 +16,7 @@ daemon/src/main/resources/public/
 
 ### IntelliJ IDEA ###
 .idea
+.run
 *.iws
 *.iml
 *.ipr
@@ -32,3 +33,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+postgres

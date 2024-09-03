@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: hhf-server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hhf
+    username: postgres
+    password: password

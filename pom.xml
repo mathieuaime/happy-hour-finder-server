@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.3</version>
+        <version>3.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -18,43 +18,38 @@
     <description>Happy Hour Finder</description>
 
     <modules>
-        <module>api</module>
-        <module>persistence</module>
+        <module>common</module>
+        <module>services</module>
         <module>daemon</module>
-        <module>domain</module>
-        <module>web</module>
         <module>frontend</module>
     </modules>
 
     <properties>
-        <java.version>15</java.version>
+        <java.version>21</java.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.mathieuaime.hhf</groupId>
-                <artifactId>api</artifactId>
+                <artifactId>common-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.mathieuaime.hhf</groupId>
                 <artifactId>daemon</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.mathieuaime.hhf</groupId>
-                <artifactId>domain</artifactId>
+                <artifactId>services-bar</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mathieuaime.hhf</groupId>
-                <artifactId>persistence</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mathieuaime.hhf</groupId>
-                <artifactId>web</artifactId>
+                <artifactId>services-happyhour</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
