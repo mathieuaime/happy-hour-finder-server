@@ -1,6 +1,9 @@
 {
   "name": "HHF",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "shutdownAction": "stopCompose",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": "true"
@@ -16,18 +19,8 @@
     },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
     },
-    "ghcr.io/itsmechlark/features/postgresql:1": {
-      "version": "16"
-    }
-  },
-  // Configure tool-specific properties.
-  "customizations": {
-    // Configure properties specific to VS Code.
-    "vscode": {
-      "settings": {},
-      "extensions": [
-        "streetsidesoftware.code-spell-checker"
-      ]
+    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+      "packages": "curl,nano"
     }
   }
 }
